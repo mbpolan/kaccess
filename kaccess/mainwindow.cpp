@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by KanadaKid                                       *
+ *   Copyright (C) 2005 by KanadaKid                                       *
  *   kanadakid@gmail.com                                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <qaction.h>
+#include <qapplication.h>
 #include <qpopupmenu.h>
 #include <qmenubar.h>
 #include <qworkspace.h>
@@ -55,6 +56,10 @@ void mainWindow::makeActions() {
     saveDbAct->setStatusTip("Save this database as another file");
     connect(saveDbAsAct, SIGNAL(activated()), this, SLOT(slotSaveDbAs()));
     
+    exitAct=new QAction(tr("Exit"), tr("Ctrl+Q"), this);
+    exitAct->setStatusTip("Exit KAccess");
+    connect(exitAct, SIGNAL(activated()), qApp, SLOT(quit()));
+    
     return;
 };
 
@@ -65,6 +70,9 @@ void mainWindow::makeMenus() {
     openDbAct->addTo(fileMenu);
     saveDbAct->addTo(fileMenu);
     saveDbAsAct->addTo(fileMenu);
+    
+    fileMenu->insertSeparator();
+    exitAct->addTo(fileMenu);
     
     menuBar()->insertItem("&File", fileMenu);
 };

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by KanadaKid                                       *
+ *   Copyright (C) 2005 by KanadaKid                                       *
  *   kanadakid@gmail.com                                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -48,11 +48,10 @@ class mainWindow: public QMainWindow {
 	QAction *openDbAct;
 	QAction *saveDbAct;
 	QAction *saveDbAsAct;
+	QAction *exitAct;
 	
 	QPopupMenu *fileMenu;
 	QPopupMenu *editMenu;
 	QPopupMenu *helpMenu;
 	QPopupMenu *OpsMenu;
-	
-	
 };

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by KanadaKid                                       *
+ *   Copyright (C) 2004 by KanadaKid                                       *
  *   kanadakid@gmail.com                                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,67 +17,20 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
-#include <qmainwindow.h>
-#include <vector>
 
-class objButtonList;
-class QGroupBox;
-class QListView;
-class QAction;
-class QPushButton;
-class QToolbar;
-class QDockWindow;
-class QListViewItem;
-class QTable;
+#include <qlineedit.h>
+#include <qtable.h>
+#include <qcombobox.h>
+#include <qlayout.h>
 
-class dbWindow: public QMainWindow {
-    Q_OBJECT
+#include "tabledesigner.h"
+
+tableDesigner::tableDesigner(QWidget *parent, const char *name): QDialog(parent, name) {
+    setCaption("Designing table");
+    setMinimumSize(800, 600);
     
-    public:
-	dbWindow(const char *dbName, QWidget *parent=0, const char *name=0);
-	
-	void makeActions();
-	void makeButtons();
-	void makeToolbars();
-	void makeObjList();
-	
-	void addPreOps();
-	
-	// i/o methods for the database
-	void openTableDesigner();
-	void openFormDesigner();
-	void openReportWizard();
-	void openTable(QListViewItem*);
-	void openForm(QListViewItem*);
-	void openReport(QListViewItem*);
-	
-    public slots:
-	void newSelected();
-	void openSelected();
-	void designSelected();
-	
-	void parseTableItem(QListViewItem*);
-	void parseFormItem(QListViewItem*);
-	void parseReportItem(QListViewItem*);
-	
-	void viewObject(int);
-	void viewTables();
-	void viewForms();
-	void viewReports();
-	
-    private:
-	QDockWindow *sidePanel;
-	
-	QAction *openThingAct;
-	QAction *newThingAct;
-	QAction *designThingAct;
-	
-	objButtonList  *objButtons;
-	std::vector<QListView*> objLists;
-	
-	QToolBar *mainTb;
-	
-	int openObject;
-	std::vector<QTable*> tables; // tables
+    grid=new QGridLayout(2, 2);
+    table=new QTable(50, 50, this);
+    
+    grid->addMultiCellWidget(table, 0, 0, 0, 1);
 };
