@@ -19,19 +19,45 @@
  ***************************************************************************/
 
 #include <qdialog.h>
+#include <qwidget.h>
 
 class QLineEdit;
 class QTable;
-class QComboBox;
 class QGridLayout;
+class QStringList;
+class QLabel;
+class descriptionFrame;
+
+class tableDesignerWidget;
 
 class tableDesigner: public QDialog {
     public:
 	tableDesigner(QWidget *parent=0, const char *name=0);
 	
     private:
+	
+	tableDesignerWidget *designer;
+};
+
+class tableDesignerWidget: public QWidget {
+    Q_OBJECT
+    
+    public:
+	tableDesignerWidget(QWidget *parent, const char *name=0);
+	
+	void fillDataTypeBox(QStringList&);
+	
+    public slots:
+	void updateCellDescription(int, int);
+	
+    private:
 	QLineEdit *fieldSize;
+	QStringList data_types;
+	
+	QLabel *msgLabel;
 	
 	QTable *table;
 	QGridLayout *grid;
+	
+	descriptionFrame *dFrame;
 };

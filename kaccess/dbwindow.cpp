@@ -30,6 +30,7 @@
 
 #include "widgets.h"
 #include "dbwindow.h"
+#include "tabledesigner.h"
 
 // the database overview window inside the workspace
 dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMainWindow(parent, name, WDestructiveClose) {
@@ -61,6 +62,8 @@ dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMain
     setCentralWidget(objLists[0]);
     
     moveDockWindow(sidePanel, Qt::Left);
+    
+    newTableDesigner=new tableDesigner(this);
 };
 
 // create the various actions
@@ -87,18 +90,24 @@ void dbWindow::makeToolbars() {
 void dbWindow::addPreOps() {
     objLists[0]->addColumn("Tables");
     objLists[0]->insertItem(new QListViewItem(objLists[0], "Create a table in design view"));
-    connect(objLists[0], SIGNAL(clicked(QListViewItem*)), this, SLOT(parseTableItem(QLIstViewItem*)));
+    connect(objLists[0], SIGNAL(doubleClicked(QListViewItem*)), this, SLOT(parseTableItem(QListViewItem*)));
     
     objLists[1]->addColumn("Forms");
     objLists[1]->insertItem(new QListViewItem(objLists[1], "Create a form in design view"));
-    connect(objLists[1], SIGNAL(clicked(QListViewItem*)), this, SLOT(parseFormItem(QListViewItem*)));
+    connect(objLists[1], SIGNAL(doubleClicked(QListViewItem*)), this, SLOT(parseFormItem(QListViewItem*)));
     
     objLists[2]->addColumn("Reports");
     objLists[2]->insertItem(new QListViewItem(objLists[2], "Create a report in design view"));
-    connect(objLists[2], SIGNAL(clicked(QListViewItem*)), this, SLOT(parseReportItem(QListViewItem*)));
+    connect(objLists[2], SIGNAL(doubleClicked(QListViewItem*)), this, SLOT(parseReportItem(QListViewItem*)));
 };
 
 void dbWindow::openTableDesigner() {
+    newTableDesigner->show();
+    newTableDesigner->raise();
+    newTableDesigner->setActiveWindow();
+    
+    if (newTableDesigner->exec()) {
+    }
     return;
 };
 

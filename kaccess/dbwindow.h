@@ -21,6 +21,7 @@
 #include <qmainwindow.h>
 #include <vector>
 
+class tableDesigner;
 class objButtonList;
 class QGroupBox;
 class QListView;
@@ -80,4 +81,6 @@ class dbWindow: public QMainWindow {
 	
 	int openObject;
 	std::vector<QTable*> tables; // tables
+	
+	tableDesigner *newTableDesigner;
 };
