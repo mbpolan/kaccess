@@ -29,6 +29,14 @@ class QLabel;
 class QLineEdit;
 class QComboBox;
 
+// fieldEditor defines
+#define FIELD_EDITOR_TEXT	0
+#define FIELD_EDITOR_NUMBER	1
+#define FIELD_EDITOR_CURRENCY	2
+#define FIELD_EDITOR_YN		3
+#define FIELD_EDITOR_MEMO	4
+#define FIELD_EDITOR_DATE_TIME	5
+
 // a widget that displays a list of object buttons
 class objButtonList: public QWidget {
     Q_OBJECT
@@ -83,6 +91,9 @@ class fieldEditor;
 class fieldDataEditor: public QTabWidget {
     public:
 	fieldDataEditor(QWidget *parent, const char *name=0);
+	
+	// various methods
+	void setEditor(int);
 	
     private:
 	std::vector<fieldEditor*> editors;

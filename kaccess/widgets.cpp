@@ -18,6 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <qapplication.h>
+#include <qeventloop.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
@@ -116,6 +118,22 @@ fieldDataEditor::fieldDataEditor(QWidget *parent, const char *name): QTabWidget(
     editors.push_back(new memoFieldEditor(this));
     editors.push_back(new dateTimeFieldEditor(this));
     
+    // hide all of the editors by default
+    for (int i=0; i<editors.size(); i++)
+	editors[i]->hide();
+    
+    // process any pending events
+   qApp->eventLoop()->processEvents(QEventLoop::ExcludeUserInput);
+    
+};
+
+// method to set the editor to show
+void fieldDataEditor::setEditor(int editor_id) {
+    // hide all of the editors except the one we want to show now
+    for (int i=0; i<editors.size(); i++) {
+	if (i!=editor_id)
+	    editors[i]->hide();
+    }
 };
 
 /*********************************************************************

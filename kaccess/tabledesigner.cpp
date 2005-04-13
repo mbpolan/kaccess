@@ -23,6 +23,7 @@
 #include <qlayout.h>
 #include <qstringlist.h>
 #include <qlabel.h>
+#include <qpushbutton.h>
 
 #include "tabledesigner.h"
 #include "widgets.h"
@@ -33,6 +34,9 @@ tableDesigner::tableDesigner(QWidget *parent, const char *name): QDialog(parent,
     
     designer=new tableDesignerWidget(this);
     designer->setMinimumSize(800, 600);
+    
+    // signal connection
+    connect(designer, SIGNAL(saveButtonClicked()), SIGNAL(tdSaveButtonClicked()));
 };
 
 /**********************************************************
@@ -42,6 +46,7 @@ tableDesigner::tableDesigner(QWidget *parent, const char *name): QDialog(parent,
 tableDesignerWidget::tableDesignerWidget(QWidget *parent, const char *name): QWidget(parent, name) {
     grid=new QGridLayout(this, 3, 2);
     table=new QTable(50, 3, this);
+    f_editor=new fieldDataEditor(this);
     table->setSelectionMode(QTable::NoSelection);
     
     // set a data type field
@@ -63,12 +68,25 @@ tableDesignerWidget::tableDesignerWidget(QWidget *parent, const char *name): QWi
     
     grid->addMultiCellWidget(table, 0, 0, 0, 1/*, Qt::AlignCenter*/);
     
+    grid->addWidget(f_editor, 1, 0);
+    
     msgLabel=new QLabel("<font color=blue>Here you create or edit tables in this database.</font>", this);
     grid->addWidget(msgLabel, 1, 1, Qt::AlignCenter);
     
+    // make the buttons
+    saveTableButton=new QPushButton("Save Table", this);
+    cancelButton=new QPushButton("Cancel", this);
+    
+    grid->addWidget(saveTableButton, 2, 0);
+    grid->addWidget(cancelButton, 2, 1);
+    
+    // stretch factors
     grid->setRowStretch(0, 10);
     grid->setRowStretch(1, 5);
     grid->setRowStretch(2, 3);
+    
+    grid->setColStretch(0, 7);
+    grid->setColStretch(1, 3);
     
     // for updating the data table's description based on cell
     connect(table, SIGNAL(clicked(int, int, int, const QPoint&)), this, SLOT(updateCellDescription(int, int)));

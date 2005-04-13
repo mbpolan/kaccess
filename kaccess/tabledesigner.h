@@ -26,19 +26,28 @@ class QTable;
 class QGridLayout;
 class QStringList;
 class QLabel;
+class QPushButton;
 class descriptionFrame;
+class fieldDataEditor;
 
 class tableDesignerWidget;
 
+// the table designer class
 class tableDesigner: public QDialog {
+    Q_OBJECT
+    
     public:
 	tableDesigner(QWidget *parent=0, const char *name=0);
+	
+    signals:
+	void tdSaveButtonClicked();
 	
     private:
 	
 	tableDesignerWidget *designer;
 };
 
+// widget that is used to in class tableDesigner
 class tableDesignerWidget: public QWidget {
     Q_OBJECT
     
@@ -50,14 +59,22 @@ class tableDesignerWidget: public QWidget {
     public slots:
 	void updateCellDescription(int, int);
 	
+    signals:
+	void saveButtonClicked();
+	
     private:
-	QLineEdit *fieldSize;
-	QStringList data_types;
+	QLineEdit *fieldSize; // the size of the field (used by all editors)
+	QStringList data_types; // list of data types
 	
-	QLabel *msgLabel;
+	QLabel *msgLabel; // FIXME: use descriptionFrame instead of this
 	
-	QTable *table;
-	QGridLayout *grid;
+	QTable *table; // the main table
+	QGridLayout *grid; // layout grid
 	
-	descriptionFrame *dFrame;
+	fieldDataEditor *f_editor; // field editors
+	descriptionFrame *dFrame; // description frame
+	
+	// buttons
+	QPushButton *saveTableButton;
+	QPushButton *cancelButton;
 };
