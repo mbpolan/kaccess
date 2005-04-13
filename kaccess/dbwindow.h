@@ -67,6 +67,8 @@ class dbWindow: public QMainWindow {
 	void viewForms();
 	void viewReports();
 	
+	void saveTable(QString);
+	
     private:
 	QDockWindow *sidePanel;
 	

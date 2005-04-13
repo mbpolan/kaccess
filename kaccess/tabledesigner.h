@@ -39,11 +39,14 @@ class tableDesigner: public QDialog {
     public:
 	tableDesigner(QWidget *parent=0, const char *name=0);
 	
+	// various methods
+	QTable* getTable() const {return table;}
+	
     signals:
-	void tdSaveButtonClicked();
+	void tdSaveButtonClicked(QString);
 	
     private:
-	
+	QTable *table;
 	tableDesignerWidget *designer;
 };
 
@@ -54,21 +57,24 @@ class tableDesignerWidget: public QWidget {
     public:
 	tableDesignerWidget(QWidget *parent, const char *name=0);
 	
+	// methods
 	void fillDataTypeBox(QStringList&);
+	
+	QTable *table; // the main table	
 	
     public slots:
 	void updateCellDescription(int, int);
+	void broadcastSaveButtonClicked();
 	
     signals:
-	void saveButtonClicked();
+	void saveButtonClicked(QString);
+	void cancelButtonClicked();
 	
     private:
 	QLineEdit *fieldSize; // the size of the field (used by all editors)
 	QStringList data_types; // list of data types
 	
 	QLabel *msgLabel; // FIXME: use descriptionFrame instead of this
-	
-	QTable *table; // the main table
 	QGridLayout *grid; // layout grid
 	
 	fieldDataEditor *f_editor; // field editors

@@ -34,9 +34,12 @@ tableDesigner::tableDesigner(QWidget *parent, const char *name): QDialog(parent,
     
     designer=new tableDesignerWidget(this);
     designer->setMinimumSize(800, 600);
+    table=designer->table;
     
     // signal connection
-    connect(designer, SIGNAL(saveButtonClicked()), SIGNAL(tdSaveButtonClicked()));
+    connect(designer, SIGNAL(saveButtonClicked(QString)), SIGNAL(tdSaveButtonClicked(QString)));
+    connect(designer, SIGNAL(saveButtonClicked(QString)), SLOT(accept()));
+    connect(designer, SIGNAL(cancelButtonClicked()), SLOT(reject()));
 };
 
 /**********************************************************
@@ -76,6 +79,8 @@ tableDesignerWidget::tableDesignerWidget(QWidget *parent, const char *name): QWi
     // make the buttons
     saveTableButton=new QPushButton("Save Table", this);
     cancelButton=new QPushButton("Cancel", this);
+    connect(saveTableButton, SIGNAL(clicked()), SLOT(broadcastSaveButtonClicked()));
+    connect(cancelButton, SIGNAL(clicked()), SIGNAL(cancelButtonClicked()));
     
     grid->addWidget(saveTableButton, 2, 0);
     grid->addWidget(cancelButton, 2, 1);
@@ -116,4 +121,19 @@ void tableDesignerWidget::updateCellDescription(int row, int col) {
     }
     
     return;
+};
+
+// slot to emit a signal containing the name of the table
+void tableDesignerWidget::broadcastSaveButtonClicked() {
+    saveDialog sd;
+    
+    sd.show();
+    sd.raise();
+    sd.setActiveWindow();
+    
+    if (sd.exec()) {
+	QString name=sd.getText();
+	if (name!=QString::null)
+	    emit saveButtonClicked(name);
+    }
 };

@@ -64,6 +64,7 @@ dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMain
     moveDockWindow(sidePanel, Qt::Left);
     
     newTableDesigner=new tableDesigner(this);
+    connect(newTableDesigner, SIGNAL(tdSaveButtonClicked(QString)), SLOT(saveTable(QString)));
 };
 
 // create the various actions
@@ -206,4 +207,35 @@ void dbWindow::viewReports() {
     setCentralWidget(objLists[2]);
     objLists[2]->show();
     return;
+};
+
+// save the table stored in the designer
+void dbWindow::saveTable(QString tableName) {
+    QTable *t=newTableDesigner->getTable();
+    QTable *nt=new QTable();
+    std::vector<int> activeRows;
+    
+    // get a count of rows that have data in them
+    for (int i=0; i < t->numRows(); i++) {
+	// we always check the cells in first column because if there's text there, then
+	// the row is considered to be a new entry
+	if (t->item(i, 0) && t->item(i, 0)->text()!=QString::null) {
+	    activeRows.push_back(i);
+	}
+    }
+    
+    // set columns for new table
+    nt->setNumCols(activeRows.size());
+    
+    // set column headings
+    QHeader *h=nt->verticalHeader();
+    for (int i=0; i < activeRows.size(); i++) {
+	//h->setLabel(i, t->item(activeRows[i], 2)->text());
+    }
+    
+    // add this table to the list
+    tables.push_back(nt);
+    
+    // and add it to the list
+    QListViewItem *item=new QListViewItem(objLists[0], tableName);
 };

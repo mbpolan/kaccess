@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <qdialog.h>
 #include <qwidget.h>
 #include <qtabwidget.h>
 #include <vector>
@@ -162,4 +163,25 @@ class memoFieldEditor: public fieldEditor {
 class dateTimeFieldEditor: public fieldEditor {
     public:
 	dateTimeFieldEditor(QWidget *parent=0, const char *name=0);
+};
+
+// dialog box to save table
+class saveDialog: public QDialog {
+    public:
+	saveDialog(QString title="Save", QString msg="Enter save name", QWidget *parent=0, const char *name=0);
+	
+	// methods
+	void setMsg(QString msg);
+	QString getMsg() const;
+	
+	QString getText() const;
+	
+    private:
+	QGridLayout *grid;
+	QLabel *msgLabel;
+	
+	QLineEdit *lineEdit;
+	
+	QPushButton *okButton;
+	QPushButton *cancelButton;
 };
