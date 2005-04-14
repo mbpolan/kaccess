@@ -1,6 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by KanadaKid                                       *
- *   kanadakid@gmail.com                                                   *
+ *   Copyright (C) 2005 by the KAccess Team                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,6 +16,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+// dbwindow.h: contains dbWindow classes and friends
+
+#ifndef dbwindow_h
+#define dbwindow_h
  
 #include <qmainwindow.h>
 #include <vector>
@@ -77,7 +80,7 @@ class dbWindow: public QMainWindow {
 	QAction *designThingAct;
 	
 	objButtonList  *objButtons;
-	std::vector<QListView*> objLists;
+	std::vector<QListView*> objLists; // TODO: replace this with an objListView vector
 	
 	QToolBar *mainTb;
 	
@@ -86,3 +89,5 @@ class dbWindow: public QMainWindow {
 	
 	tableDesigner *newTableDesigner;
 };
+
+#endif

@@ -1,6 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by KanadaKid                                       *
- *   kanadakid@gmail.com                                                   *
+ *   Copyright (C) 2005 by the KAccess Team                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,10 +16,15 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+// widgets.h: classes that derive directly from QWidget
+
+#ifndef widgets_h
+#define widgets_h
 
 #include <qdialog.h>
 #include <qwidget.h>
 #include <qtabwidget.h>
+#include <qlistview.h>
 #include <vector>
 
 class QGridLayout;
@@ -165,23 +169,4 @@ class dateTimeFieldEditor: public fieldEditor {
 	dateTimeFieldEditor(QWidget *parent=0, const char *name=0);
 };
 
-// dialog box to save table
-class saveDialog: public QDialog {
-    public:
-	saveDialog(QString title="Save", QString msg="Enter save name", QWidget *parent=0, const char *name=0);
-	
-	// methods
-	void setMsg(QString msg);
-	QString getMsg() const;
-	
-	QString getText() const;
-	
-    private:
-	QGridLayout *grid;
-	QLabel *msgLabel;
-	
-	QLineEdit *lineEdit;
-	
-	QPushButton *okButton;
-	QPushButton *cancelButton;
-};
+#endif

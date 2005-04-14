@@ -1,6 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by KanadaKid                                       *
- *   kanadakid@gmail.com                                                   *
+ *   Copyright (C) 2005 by the KAccess Team                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,6 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+// widgets.cpp: implementations of custom widgets
 
 #include <qapplication.h>
 #include <qeventloop.h>
@@ -186,46 +186,3 @@ memoFieldEditor::memoFieldEditor(QWidget *parent, const char *name): fieldEditor
 dateTimeFieldEditor::dateTimeFieldEditor(QWidget *parent, const char *name): fieldEditor(parent, name) {
 };
 
-/*********************************************************************
-  * saveDialog widget *
-  ********************************************************************/
-
-saveDialog::saveDialog(QString title, QString msg, QWidget *parent, const char *name): QDialog(parent, name) {
-    setCaption(title);
-    grid=new QGridLayout(this, 3, 2);
-    
-    msgLabel=new QLabel(msg, this);
-    lineEdit=new QLineEdit(this);
-    
-    // buttons
-    okButton=new QPushButton("Ok", this);
-    cancelButton=new QPushButton("Cancel", this);
-    
-    // set some row spacings
-    for (int i=0; i<grid->numRows(); i++)
-	grid->setRowSpacing(i, 3);
-	    
-    grid->addMultiCellWidget(msgLabel, 0, 0, 0, 1);
-    grid->addMultiCellWidget(lineEdit, 1, 1, 0, 1);
-    grid->addWidget(okButton, 2, 0);
-    grid->addWidget(cancelButton, 2, 1);
-    
-    // connect the push buttons
-    connect(okButton, SIGNAL(clicked()), SLOT(accept()));
-    connect(cancelButton, SIGNAL(clicked()), SLOT(reject()));
-};
-
-// set the dialog's label
-void saveDialog::setMsg(QString msg) {
-    msgLabel->setText(msg);
-};
-
-// get the dialog's label
-QString saveDialog::getMsg() const {
-    return msgLabel->text();
-};
-
-// get the value stored in the line edit
-QString saveDialog::getText() const {
-    return lineEdit->text();
-};

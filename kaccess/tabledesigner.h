@@ -1,6 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by KanadaKid                                       *
- *   kanadakid@gmail.com                                                   *
+ *   Copyright (C) 2005 by the KAccess Team                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,6 +16,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+// tabledesigner.h: contains the tableDesigner class and variants
+
+#ifndef tabledesigner_h
+#define tabledesigner_h
 
 #include <qdialog.h>
 #include <qwidget.h>
@@ -84,3 +87,5 @@ class tableDesignerWidget: public QWidget {
 	QPushButton *saveTableButton;
 	QPushButton *cancelButton;
 };
+
+#endif

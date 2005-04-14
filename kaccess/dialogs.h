@@ -16,47 +16,37 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-// mainwindow.h: contains the mainWindow class
+// dialogs.h: classes that are dialogs or derive from QDialog and friends
 
-#ifndef mainwindow_h
-#define mainwindow_h
+#ifndef dialogs_h
+#define dialogs_h
 
-#include <qmainwindow.h>
+#include <qdialog.h>
 
-class QWorkspace;
-class QAction;
-class QPopupMenu;
+class QGridLayout;
+class QLabel;
+class QLineEdit;
+class QPushButton;
 
-// the main application window
-class mainWindow: public QMainWindow {
-    Q_OBJECT
-    
+// dialog box to save table
+class saveDialog: public QDialog {
     public:
-	mainWindow(QWidget *parent=0, const char *name=0);
+	saveDialog(QString title="Save", QString msg="Enter save name", QWidget *parent=0, const char *name=0);
 	
-	void makeActions();
-	void makeMenus();
-	void makeToolbars();
+	// methods
+	void setMsg(QString msg);
+	QString getMsg() const;
 	
-    public slots:
-	void slotNewDb();
-	void slotOpenDb();
-	void slotSaveDb();
-	void slotSaveDbAs();
-       
-   private:
-	QWorkspace *workspace;
+	QString getText() const;
 	
-	QAction *newDbAct;
-	QAction *openDbAct;
-	QAction *saveDbAct;
-	QAction *saveDbAsAct;
-	QAction *exitAct;
+    private:
+	QGridLayout *grid;
+	QLabel *msgLabel;
 	
-	QPopupMenu *fileMenu;
-	QPopupMenu *editMenu;
-	QPopupMenu *helpMenu;
-	QPopupMenu *OpsMenu;
+	QLineEdit *lineEdit;
+	
+	QPushButton *okButton;
+	QPushButton *cancelButton;
 };
 
 #endif

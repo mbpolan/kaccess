@@ -16,47 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-// mainwindow.h: contains the mainWindow class
+// objlistview.cpp: implementations of objListView class and others
 
-#ifndef mainwindow_h
-#define mainwindow_h
+#include "objlistview.h"
 
-#include <qmainwindow.h>
-
-class QWorkspace;
-class QAction;
-class QPopupMenu;
-
-// the main application window
-class mainWindow: public QMainWindow {
-    Q_OBJECT
-    
-    public:
-	mainWindow(QWidget *parent=0, const char *name=0);
-	
-	void makeActions();
-	void makeMenus();
-	void makeToolbars();
-	
-    public slots:
-	void slotNewDb();
-	void slotOpenDb();
-	void slotSaveDb();
-	void slotSaveDbAs();
-       
-   private:
-	QWorkspace *workspace;
-	
-	QAction *newDbAct;
-	QAction *openDbAct;
-	QAction *saveDbAct;
-	QAction *saveDbAsAct;
-	QAction *exitAct;
-	
-	QPopupMenu *fileMenu;
-	QPopupMenu *editMenu;
-	QPopupMenu *helpMenu;
-	QPopupMenu *OpsMenu;
-};
-
-#endif

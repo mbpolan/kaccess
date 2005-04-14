@@ -1,6 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by KanadaKid                                       *
- *   kanadakid@gmail.com                                                   *
+ *   Copyright (C) 2005 by the KAccess Team                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,6 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+// mainwindow.cpp: implementations of mainWindow class
 
 #include <qaction.h>
 #include <qapplication.h>

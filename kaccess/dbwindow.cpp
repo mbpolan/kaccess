@@ -1,6 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by KanadaKid                                       *
- *   kanadakid@gmail.com                                                   *
+ *   Copyright (C) 2005 by the KAccess Team                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,6 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+// dbwindow.cpp: implementations of dbWindow class
 
 #include <qgroupbox.h>
 #include <qlistview.h>
@@ -28,6 +28,7 @@
 #include <qtoolbar.h>
 #include <qtable.h>
 
+#include "dialogs.h"
 #include "widgets.h"
 #include "dbwindow.h"
 #include "tabledesigner.h"
