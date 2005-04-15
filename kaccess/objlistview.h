@@ -23,6 +23,8 @@
 
 #include <qlistview.h>
 
+class objListViewItem;
+
 // list view class for displaying tables, reports, etc.
 // TODO: finish up the implementations of this class!!
 class objListView: public QListView {
@@ -33,4 +35,16 @@ class objListView: public QListView {
 	void sortByPriority();
 };
 
+// item class used in the list view
+class objListViewItem: public QListViewItem {
+    public:
+	objListViewItem(bool actItem, objListView *parent=0, QString label=QString::null);
+	objListViewItem(bool actItem, objListViewItem *parent, QString label=QString::null);
+	
+	bool isActionItem() const {return isAction;}
+	
+    private:
+	bool isAction;
+};
+    
 #endif

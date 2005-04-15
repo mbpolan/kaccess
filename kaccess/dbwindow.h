@@ -26,14 +26,14 @@
 
 class tableDesigner;
 class objButtonList;
+class objListView;
 class QGroupBox;
-class QListView;
 class QAction;
 class QPushButton;
 class QToolbar;
 class QDockWindow;
-class QListViewItem;
 class QTable;
+class QListViewItem;
 
 class dbWindow: public QMainWindow {
     Q_OBJECT
@@ -80,7 +80,7 @@ class dbWindow: public QMainWindow {
 	QAction *designThingAct;
 	
 	objButtonList  *objButtons;
-	std::vector<QListView*> objLists; // TODO: replace this with an objListView vector
+	std::vector<objListView*> objLists;
 	
 	QToolBar *mainTb;
 	

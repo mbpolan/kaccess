@@ -31,6 +31,7 @@
 #include "dialogs.h"
 #include "widgets.h"
 #include "dbwindow.h"
+#include "objlistview.h"
 #include "tabledesigner.h"
 
 // the database overview window inside the workspace
@@ -51,7 +52,7 @@ dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMain
     
     // main listview of contents (tables, forms, etc.)
     for (int i=0; i < 3; i++) {
-	objLists.push_back(new QListView(this));
+	objLists.push_back(new objListView(this));
 	if (i==0) 
 	    continue;
 	else
@@ -91,15 +92,15 @@ void dbWindow::makeToolbars() {
 // set up the list views and add in some predefined options
 void dbWindow::addPreOps() {
     objLists[0]->addColumn("Tables");
-    objLists[0]->insertItem(new QListViewItem(objLists[0], "Create a table in design view"));
+    objLists[0]->insertItem(new objListViewItem(true, objLists[0], "Create a table in design view"));
     connect(objLists[0], SIGNAL(doubleClicked(QListViewItem*)), this, SLOT(parseTableItem(QListViewItem*)));
     
     objLists[1]->addColumn("Forms");
-    objLists[1]->insertItem(new QListViewItem(objLists[1], "Create a form in design view"));
+    objLists[1]->insertItem(new objListViewItem(true, objLists[1], "Create a form in design view"));
     connect(objLists[1], SIGNAL(doubleClicked(QListViewItem*)), this, SLOT(parseFormItem(QListViewItem*)));
     
     objLists[2]->addColumn("Reports");
-    objLists[2]->insertItem(new QListViewItem(objLists[2], "Create a report in design view"));
+    objLists[2]->insertItem(new objListViewItem(true, objLists[2], "Create a report in design view"));
     connect(objLists[2], SIGNAL(doubleClicked(QListViewItem*)), this, SLOT(parseReportItem(QListViewItem*)));
 };
 
@@ -123,7 +124,7 @@ void dbWindow::openReportWizard() {
 
 // function to open a table
 void dbWindow::openTable(QListViewItem *item) {
-    QTable *t=tables[item->itemPos()];
+    QTable *t=tables[(dynamic_cast<objListViewItem*> (item))->itemPos()];
     return;
 };
 
@@ -238,5 +239,6 @@ void dbWindow::saveTable(QString tableName) {
     tables.push_back(nt);
     
     // and add it to the list
-    QListViewItem *item=new QListViewItem(objLists[0], tableName);
+    objListViewItem *item=new objListViewItem(false, (objListViewItem*) objLists[0]->firstChild(), tableName);
+    objLists[0]->ensureItemVisible(item);
 };

@@ -17,6 +17,30 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 // objlistview.cpp: implementations of objListView class and others
-
+#include <iostream>
 #include "objlistview.h"
 
+// objListView constructor: takes 2 parameters.
+objListView::objListView(QWidget *parent, const char *name): QListView(parent, name) {
+};
+
+// method to sort the items in the list making sure actions are listed first. 
+void objListView::sortByPriority() {
+};
+
+/****************************************************************************
+  * End of objListView implementations; start objListViewItem implementations...
+  ***************************************************************************/
+
+objListViewItem::objListViewItem(bool actItem, objListView *parent, QString label): 
+	QListViewItem(parent, label, QString::null, QString::null, QString::null, QString::null, QString::null,
+		    QString::null, QString::null) {
+    
+    isAction=actItem;
+};
+
+// objListView constructor: takes 1 parameter
+objListViewItem::objListViewItem(bool actItem, objListViewItem *parent, QString label): 
+	QListViewItem(parent, label) {
+    isAction=actItem;
+};
