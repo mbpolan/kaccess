@@ -41,15 +41,17 @@ saveDialog::saveDialog(QString title, QString msg, QWidget *parent, const char *
     // buttons
     okButton=new QPushButton("Ok", this);
     cancelButton=new QPushButton("Cancel", this);
-    
-    // set some row spacings
-    for (int i=0; i<grid->numRows(); i++)
-	grid->setRowSpacing(i, 3);
 	    
     grid->addMultiCellWidget(msgLabel, 0, 0, 0, 1);
     grid->addMultiCellWidget(lineEdit, 1, 1, 0, 1);
     grid->addWidget(okButton, 2, 0);
     grid->addWidget(cancelButton, 2, 1);
+    
+    // set some row spacings
+    for (int i=0; i<grid->numRows(); i++)
+	grid->setRowSpacing(i, 3);
+    
+    grid->setMargin(3);
     
     // connect the push buttons
     connect(okButton, SIGNAL(clicked()), SLOT(accept()));

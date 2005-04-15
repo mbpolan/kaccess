@@ -104,8 +104,16 @@ void mainWindow::makeToolbars() {
 void mainWindow::slotNewDb() {
     QString f=QFileDialog::getSaveFileName("/home/mike", "KAccess Databases (*kdb)", this, "open file dialog", "Save Database" );
     
-    dbWindow *newDb=new dbWindow("db", workspace);
-    newDb->show();
+    saveDialog sd("New Database", "Enter a name for this database", this);
+    sd.show();
+    sd.raise();
+    sd.setActiveWindow();
+    
+    // the user accepted to create this database
+    if (sd.exec() && sd.getText()!=QString::null) {
+	dbWindow *newDb=new dbWindow(sd.getText(), workspace);
+	newDb->show();
+    }
 };
 
 // slot to open a database

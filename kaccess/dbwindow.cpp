@@ -36,7 +36,11 @@
 
 // the database overview window inside the workspace
 dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMainWindow(parent, name, WDestructiveClose) {
-    setCaption("Database"); // TODO: database names
+    // set the title 
+    QString dbTitle="Database: ";
+    dbTitle+=dbName;
+    setCaption(dbTitle);
+    
     setMinimumSize(400, 300);
     openObject=0;
     
