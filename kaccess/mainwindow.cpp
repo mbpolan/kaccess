@@ -24,6 +24,7 @@
 #include <qmenubar.h>
 #include <qworkspace.h>
 #include <qfiledialog.h>
+#include <qmessagebox.h>
 
 #include "dbwindow.h"
 #include "mainwindow.h"
@@ -60,6 +61,14 @@ void mainWindow::makeActions() {
     exitAct->setStatusTip("Exit KAccess");
     connect(exitAct, SIGNAL(activated()), qApp, SLOT(quit()));
     
+    aboutKAccessAct=new QAction(tr("About KAccess"), tr("Alt+A"), this);
+    aboutKAccessAct->setStatusTip("About KAccess");
+    connect(aboutKAccessAct, SIGNAL(activated()), SLOT(aboutKAccess()));
+    
+    aboutQtAct=new QAction(tr("About Qt"), tr("Alt+Q"), this);
+    aboutQtAct->setStatusTip("About the Qt library");
+    connect(aboutQtAct, SIGNAL(activated()), qApp, SLOT(aboutQt()));
+    
     return;
 };
 
@@ -74,7 +83,14 @@ void mainWindow::makeMenus() {
     fileMenu->insertSeparator();
     exitAct->addTo(fileMenu);
     
+    helpMenu=new QPopupMenu(this);
+    aboutQtAct->addTo(helpMenu);
+    helpMenu->insertSeparator();
+    
+    aboutKAccessAct->addTo(helpMenu);
+    
     menuBar()->insertItem("&File", fileMenu);
+    menuBar()->insertItem("&Help", helpMenu);
 };
 
 // create toolbars
@@ -104,4 +120,17 @@ void mainWindow::slotSaveDb() {
 // slot to save a database as another file
 void mainWindow::slotSaveDbAs() {
     return;
+};
+
+// slot to display a message about KAccess
+void mainWindow::aboutKAccess() {
+    // prehaps we should write a custom dialog for this?
+    
+    QMessageBox::information(this, "About KAccess", "<font size=14>KAccess v(CVS)</font>\n"
+			     "KAccess is database management software designed for ease of\n"
+			     "use and simplicity. The official website can be found by going to:\n"
+			     "<font=courier>http://kaccess.sf.net</font>. More information, \n"
+			     "including documentation, can be found there.\n\n"
+			     "This software is licensed under the GNU GPL license. KAcess uses\n"
+			     "Trolltech's Qt 3 toolkit.\n\n-The KAccess Team");
 };

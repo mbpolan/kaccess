@@ -43,16 +43,22 @@ class mainWindow: public QMainWindow {
 	void slotOpenDb();
 	void slotSaveDb();
 	void slotSaveDbAs();
+	void aboutKAccess();
        
    private:
 	QWorkspace *workspace;
 	
+	// actions
 	QAction *newDbAct;
 	QAction *openDbAct;
 	QAction *saveDbAct;
 	QAction *saveDbAsAct;
 	QAction *exitAct;
 	
+	QAction  *aboutKAccessAct;
+	QAction *aboutQtAct;
+	
+	// menus
 	QPopupMenu *fileMenu;
 	QPopupMenu *editMenu;
 	QPopupMenu *helpMenu;
