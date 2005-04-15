@@ -22,6 +22,8 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
+#include <qtabwidget.h>
+#include <qtextedit.h>
 
 #include "dialogs.h"
 
@@ -67,4 +69,63 @@ QString saveDialog::getMsg() const {
 // get the value stored in the line edit
 QString saveDialog::getText() const {
     return lineEdit->text();
+};
+
+
+/*********************************************************************
+  * aboutKAccess dialog *
+  ********************************************************************/
+
+// aboutKAccessDialog constructor
+aboutKAccessDialog::aboutKAccessDialog(QWidget *parent, const char *name): QDialog(parent, name) {
+    setCaption("About KAccess");
+    setFixedSize(410, 290);
+    
+    grid=new QGridLayout(this, 3, 1);
+    tabBox=new QTabWidget(this);
+    
+    // general info about KAccess
+    aboutBox=new QLabel("<b>KAccess Database Management</b><br>"
+		      "<br>(c) 2005, The KAccess Team<br>"
+		      "Website: <a href=http://kaccess.sf.net>http://kaccess.sf.net</a>", this);
+    aboutBox->setAlignment(Qt::AlignCenter);
+    
+    // developers
+    devBox=new QLabel("<b>KAccess Developers</b><br>"
+		    "<br>Mike Polan (KanadaKid)<br>kanadakid@gmail.com<br>"
+		    "<br>Stephan Santos (bandana_blue)<br>bandana_blue@users.sourceforge.net<br>", this);
+    
+    // TODO: this is where we will put the GPL
+    licenseBox=new QTextEdit(this);
+    
+    // prevent the user from changing any text
+    licenseBox->setReadOnly(true);
+    
+    tabBox->insertTab(aboutBox, "About");
+    tabBox->insertTab(devBox, "Authors");
+    tabBox->insertTab(licenseBox, "License Agreement");
+    
+    // title label
+    kaccessLabel=new QLabel("<font size=14>KAccess v(CVS)</font>", this);
+    
+    // the 'ok' button
+    okButton=new QPushButton("Ok", this);
+    connect(okButton, SIGNAL(clicked()), SLOT(accept()));
+    
+    // now we add the widgets into the grid
+    grid->addWidget(kaccessLabel, 0, 0);
+    grid->addWidget(tabBox, 1, 0);
+    grid->addWidget(okButton, 2, 0);
+    
+    // stretch factors
+    grid->setRowStretch(0, 3);
+    grid->setRowStretch(1, 8);
+    grid->setRowStretch(2, 2);
+    
+    // row spacing
+    for (int i=0; i<grid->numRows(); i++)
+	grid->setRowSpacing(i, 3);
+    
+    // margin
+    grid->setMargin(3);
 };

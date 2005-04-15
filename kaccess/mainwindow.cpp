@@ -27,6 +27,7 @@
 #include <qmessagebox.h>
 
 #include "dbwindow.h"
+#include "dialogs.h"
 #include "mainwindow.h"
 
 // our main window constructor
@@ -124,13 +125,11 @@ void mainWindow::slotSaveDbAs() {
 
 // slot to display a message about KAccess
 void mainWindow::aboutKAccess() {
-    // prehaps we should write a custom dialog for this?
+    aboutKAccessDialog akDialog;
     
-    QMessageBox::information(this, "About KAccess", "<font size=14>KAccess v(CVS)</font>\n"
-			     "KAccess is database management software designed for ease of\n"
-			     "use and simplicity. The official website can be found by going to:\n"
-			     "<font=courier>http://kaccess.sf.net</font>. More information, \n"
-			     "including documentation, can be found there.\n\n"
-			     "This software is licensed under the GNU GPL license. KAcess uses\n"
-			     "Trolltech's Qt 3 toolkit.\n\n-The KAccess Team");
+    akDialog.show();
+    akDialog.raise();
+    akDialog.setActiveWindow();
+    
+    akDialog.exec();
 };

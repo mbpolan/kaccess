@@ -27,6 +27,8 @@ class QGridLayout;
 class QLabel;
 class QLineEdit;
 class QPushButton;
+class QTabWidget;
+class QTextEdit;
 
 // dialog box to save table
 class saveDialog: public QDialog {
@@ -47,6 +49,24 @@ class saveDialog: public QDialog {
 	
 	QPushButton *okButton;
 	QPushButton *cancelButton;
+};
+
+// dialog used to present some information about kaccess
+class aboutKAccessDialog: public QDialog {
+    public:
+	aboutKAccessDialog(QWidget *parent=0, const char *name=0);
+	
+    private:
+	QGridLayout *grid;
+	
+	QTabWidget *tabBox;
+	QLabel *aboutBox;
+	QLabel *devBox;
+	QTextEdit *licenseBox;
+	
+	QLabel *kaccessLabel;
+	
+	QPushButton *okButton;
 };
 
 #endif
