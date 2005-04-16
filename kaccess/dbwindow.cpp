@@ -25,14 +25,17 @@
 #include <qlayout.h>
 #include <qdockwindow.h>
 #include <iostream>
+#include <qmessagebox.h>
 #include <qtoolbar.h>
 #include <qtable.h>
+#include <qworkspace.h>
 
 #include "dialogs.h"
 #include "widgets.h"
 #include "dbwindow.h"
 #include "objlistview.h"
 #include "tabledesigner.h"
+#include "tableeditor.h"
 
 // the database overview window inside the workspace
 dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMainWindow(parent, name, WDestructiveClose) {
@@ -128,7 +131,27 @@ void dbWindow::openReportWizard() {
 
 // function to open a table
 void dbWindow::openTable(QListViewItem *item) {
-    QTable *t=tables[(dynamic_cast<objListViewItem*> (item))->itemPos()];
+//    QTable *t=tables[(dynamic_cast<objListViewItem*> (item))->itemPos()];
+    QTable *t;
+    for (int i=0; i<tables.size(); i++) {
+	if (tables[i].first==item->text(0)) {
+	    t=tables[i].second;
+	    break;
+	}
+    }
+    
+    // check to see if this table exists
+    // FIXME: get right of the following message and make sure tables are loaded correctly always
+    if (!t)
+	QMessageBox::critical(this, "Error", "Unable to fetch table from list!");
+    
+    else {
+	tableEditor ed(t, (QWorkspace*) parent());
+	ed.show();
+	ed.raise();
+	ed.setActiveWindow();
+    }
+	
     return;
 };
 
@@ -235,12 +258,17 @@ void dbWindow::saveTable(QString tableName) {
     
     // set column headings
     QHeader *h=nt->verticalHeader();
+    QTableItem *t_item;
     for (int i=0; i < activeRows.size(); i++) {
+	t_item=t->item(activeRows[i], 0);
+	if (t_item)
+	    std::cout << "row header: " << t_item->text().ascii();
 	//h->setLabel(i, t->item(activeRows[i], 2)->text());
     }
     
     // add this table to the list
-    tables.push_back(nt);
+    std::pair<QString, QTable*> p(tableName, nt);
+    tables.push_back(p);
     
     // and add it to the list
     objListViewItem *item=new objListViewItem(false, (objListViewItem*) objLists[0]->firstChild(), tableName);

@@ -85,7 +85,7 @@ class dbWindow: public QMainWindow {
 	QToolBar *mainTb;
 	
 	int openObject;
-	std::vector<QTable*> tables; // tables
+	std::vector<std::pair<QString, QTable*> > tables; // tables
 	
 	tableDesigner *newTableDesigner;
 };
