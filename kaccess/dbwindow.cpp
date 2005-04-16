@@ -130,9 +130,10 @@ void dbWindow::openReportWizard() {
 };
 
 // function to open a table
+// TODO: this needs to be redone
 void dbWindow::openTable(QListViewItem *item) {
 //    QTable *t=tables[(dynamic_cast<objListViewItem*> (item))->itemPos()];
-    QTable *t;
+/*    QTable *t;
     for (int i=0; i<tables.size(); i++) {
 	if (tables[i].first==item->text(0)) {
 	    t=tables[i].second;
@@ -151,7 +152,7 @@ void dbWindow::openTable(QListViewItem *item) {
 	ed.raise();
 	ed.setActiveWindow();
     }
-	
+   */
     return;
 };
 
