@@ -18,6 +18,7 @@
  ***************************************************************************/
 // tablemodel.cpp: implementations of tableModel and related classes
 
+#include <qtable.h>
 #include "tablemodel.h"
 
 // tableModel constructor
@@ -25,16 +26,28 @@ tableModel::tableModel(int r, int cols): rows(r), columns(cols) {
 };
 
 // method for adding a column to the table
-void tableModel::addColumn(QString label, int dataType) {
-    std::pair<QString, columnData*> p(label, new columnData(dataType, 50));
+void tableModel::addColumn(QString label, int dataType, QString descr) {
+    std::pair<QString, columnData*> p(label, new columnData(dataType, descr, 50));
     colDatas.push_back(p);
+};
+
+// convert this model to a QTable
+QTable* tableModel::toQTable(QWidget *parent) {
+    QTable *nt=new QTable(rows, columns, parent);
+    QHeader *h=nt->verticalHeader();
+    
+    for (int i=0; i<colDatas.size(); i++) {
+	h->setLabel(i, colDatas[i].first);
+    }
+    
+    return nt;
 };
 
 /**************************************************************************
    * start columnData implementations
    *************************************************************************/
 
-columnData::columnData(int data, int size): dataType(data),  fieldSize(size) {
+columnData::columnData(int data, QString descr, int size): dataType(data),  description(descr), fieldSize(size) {
     decimalPlaces=1, numberSize=256;
     allowZero=true;
     required=false;

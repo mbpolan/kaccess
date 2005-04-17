@@ -25,6 +25,7 @@
 #include <vector>
 
 class columnData;
+class QTable;
 
 // tableModel class that holds information about a table
 class tableModel {
@@ -38,8 +39,11 @@ class tableModel {
 	void setRows(int r) {rows=r;}
 	int getRows() const {return rows;}
 	
-	void addColumn(QString, int);
+	void addColumn(QString, int, QString);
 	std::pair<QString, columnData*> columnAt(int);
+	
+	QTable *toQTable(QWidget *parent); // convert to a QTable and return a pointer to it
+	QString name;
 	
     private:
 	int rows, columns;
@@ -50,9 +54,10 @@ class tableModel {
 // class that stores information about a field
 class columnData {
     public:
-	columnData(int data, int size=256);
+	columnData(int data, QString descr, int size=256);
 	
 	int dataType;
+	QString description;
 	int fieldSize;
 	int decimalPlaces, numberSize;
 	bool allowZero, required, indexed, unicodeCompr;

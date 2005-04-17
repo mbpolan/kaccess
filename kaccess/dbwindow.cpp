@@ -36,6 +36,7 @@
 #include "objlistview.h"
 #include "tabledesigner.h"
 #include "tableeditor.h"
+#include "tablemodel.h"
 
 // the database overview window inside the workspace
 dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMainWindow(parent, name, WDestructiveClose) {
@@ -132,27 +133,16 @@ void dbWindow::openReportWizard() {
 // function to open a table
 // TODO: this needs to be redone
 void dbWindow::openTable(QListViewItem *item) {
-//    QTable *t=tables[(dynamic_cast<objListViewItem*> (item))->itemPos()];
-/*    QTable *t;
+    QTable *t;
+    int pos=-1;
     for (int i=0; i<tables.size(); i++) {
-	if (tables[i].first==item->text(0)) {
-	    t=tables[i].second;
+	// found the correct tables
+	if (tables[i] && tables[i]->name==item->text(0)) {
+	    pos=i;
 	    break;
 	}
     }
     
-    // check to see if this table exists
-    // FIXME: get right of the following message and make sure tables are loaded correctly always
-    if (!t)
-	QMessageBox::critical(this, "Error", "Unable to fetch table from list!");
-    
-    else {
-	tableEditor ed(t, (QWorkspace*) parent());
-	ed.show();
-	ed.raise();
-	ed.setActiveWindow();
-    }
-   */
     return;
 };
 
@@ -242,7 +232,7 @@ void dbWindow::viewReports() {
 // save the table stored in the designer
 void dbWindow::saveTable(QString tableName) {
     QTable *t=newTableDesigner->getTable();
-    QTable *nt=new QTable();
+    tableModel *tm=new tableModel;
     std::vector<int> activeRows;
     
     // get a count of rows that have data in them
@@ -254,24 +244,32 @@ void dbWindow::saveTable(QString tableName) {
 	}
     }
     
-    // set columns for new table
-    nt->setNumCols(activeRows.size());
+    // set the columns
+    tm->setCols(activeRows.size());
     
-    // set column headings
-    QHeader *h=nt->verticalHeader();
-    QTableItem *t_item;
-    for (int i=0; i < activeRows.size(); i++) {
-	t_item=t->item(activeRows[i], 0);
-	if (t_item)
-	    std::cout << "row header: " << t_item->text().ascii();
-	//h->setLabel(i, t->item(activeRows[i], 2)->text());
+    // save the columns
+   QTableItem *item;
+    for (int i=0; i<activeRows.size(); i++) {
+	item=t->item(activeRows[i], 0); // column name
+	QString name=item->text();
+	
+	QComboTableItem *c_item=dynamic_cast<QComboTableItem*> (t->item(activeRows[i], 1)); // data type
+	int type=c_item->currentItem();
+	
+	// FIXME: this causes a segfault for some reason
+/*	item=t->item(activeRows[i], 2); // description
+	QString description=item->text();*/
+	QString description="...";
+	
+	tm->addColumn(name, type, description);
     }
+    tm->name=tableName;
     
-    // add this table to the list
-    std::pair<QString, QTable*> p(tableName, nt);
-    tables.push_back(p);
+    // add it to the list
+    objListViewItem *objItem=new objListViewItem(false, dynamic_cast<objListViewItem*> (objLists[0]->firstChild()), tableName);
+    objLists[0]->ensureItemVisible(objItem);
     
-    // and add it to the list
-    objListViewItem *item=new objListViewItem(false, (objListViewItem*) objLists[0]->firstChild(), tableName);
-    objLists[0]->ensureItemVisible(item);
+    // and to the vector of tables
+    tables.push_back(tm);
+
 };
