@@ -93,9 +93,12 @@ aboutKAccessDialog::aboutKAccessDialog(QWidget *parent, const char *name): QDial
     aboutBox->setAlignment(Qt::AlignCenter);
     
     // developers
-    devBox=new QLabel("<b>KAccess Developers</b><br>"
+    devBox=new QLabel("<br><b>The KAccess Team</b><hr><br>"
+	                    "<b>Developers</b><br>"
 		    "<br>Mike Polan (KanadaKid)<br>kanadakid@gmail.com<br>"
-		    "<br>Stephan Santos (bandana_blue)<br>bandana_blue@users.sourceforge.net<br>", this);
+		    "<br>Stephan Santos (bandana_blue)<br>bandana_blue@users.sourceforge.net<br>"
+		    "<br><b>Website Management</b><br>"
+		    "<br>George Rile (millennium_man3)<br>millennium_man@usa.com<br>", this);
     
     // TODO: this is where we will put the GPL
     licenseBox=new QTextEdit(this);
