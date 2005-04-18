@@ -117,8 +117,6 @@ void dbWindow::openTableDesigner() {
     newTableDesigner->raise();
     newTableDesigner->setActiveWindow();
     
-    if (newTableDesigner->exec()) {
-    }
     return;
 };
 
@@ -137,11 +135,14 @@ void dbWindow::openTable(QListViewItem *item) {
     int pos=-1;
     for (int i=0; i<tables.size(); i++) {
 	// found the correct tables
-	if (tables[i] && tables[i]->name==item->text(0)) {
+	if ((tables[i].first && tables[i].second) && tables[i].first->name==item->text(0)) {
 	    pos=i;
 	    break;
 	}
     }
+    
+    if (pos>=0)
+	tables[pos].second->show();
     
     return;
 };
@@ -269,7 +270,12 @@ void dbWindow::saveTable(QString tableName) {
     objListViewItem *objItem=new objListViewItem(false, dynamic_cast<objListViewItem*> (objLists[0]->firstChild()), tableName);
     objLists[0]->ensureItemVisible(objItem);
     
+    // assign an editor to this table
+    tableEditor *ed=new tableEditor(tm, this);
+    ed->hide();
+    
     // and to the vector of tables
-    tables.push_back(tm);
+    std::pair<tableModel*, tableEditor*> p(tm, ed);
+    tables.push_back(p);
 
 };

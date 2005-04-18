@@ -42,7 +42,7 @@ QTable* tableEditor::getTable() const {
 };
 
 /*************************************************************************
-  * start tableEditorWidget implementations				              *
+  * start tableEditorWidget implementations				 *
   ************************************************************************/
 
 tableEditorWidget::tableEditorWidget(tableModel *rootTable, QWidget *parent, const char *name):
@@ -51,6 +51,7 @@ tableEditorWidget::tableEditorWidget(tableModel *rootTable, QWidget *parent, con
     grid=new QGridLayout(this, 1, 1);
     setMinimumSize(800, 600);
     QTable *nTable=rootTable->toQTable(this);
+//    QTable *nTable=new QTable(2, 1, this);
     
     if (nTable) {
 	table=nTable;

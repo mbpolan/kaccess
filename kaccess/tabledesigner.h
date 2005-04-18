@@ -21,22 +21,24 @@
 #ifndef tabledesigner_h
 #define tabledesigner_h
 
-#include <qdialog.h>
+#include <qmainwindow.h>
 #include <qwidget.h>
 
-class QLineEdit;
-class QTable;
-class QGridLayout;
-class QStringList;
+class QAction;
 class QLabel;
+class QLineEdit;
+class QGridLayout;
 class QPushButton;
+class QStringList;
+class QTable;
+class QToolBar;
 class descriptionFrame;
 class fieldDataEditor;
 
 class tableDesignerWidget;
 
 // the table designer class
-class tableDesigner: public QDialog {
+class tableDesigner: public QMainWindow {
     Q_OBJECT
     
     public:
@@ -45,12 +47,23 @@ class tableDesigner: public QDialog {
 	// various methods
 	QTable* getTable() const {return table;}
 	
+    public slots:
+	void hideAndClear();
+	
     signals:
 	void tdSaveButtonClicked(QString);
 	
     private:
+	QToolBar *mainToolbar;
+	
 	QTable *table;
 	tableDesignerWidget *designer;
+	
+	QAction *primaryKeyAct;
+	
+	// private methods
+	void makeActions();
+	void makeToolbars();
 };
 
 // widget that is used to in class tableDesigner
@@ -63,11 +76,16 @@ class tableDesignerWidget: public QWidget {
 	// methods
 	void fillDataTypeBox(QStringList&);
 	
-	QTable *table; // the main table	
+	QTable *table; // the main table
+	
+	// other methods
+	bool isPrimaryKeyActivated() const {return hasPrimaryKey;}
+	void clear();
 	
     public slots:
 	void updateCellDescription(int, int);
 	void broadcastSaveButtonClicked();
+	void setPrimaryKey(bool);
 	
     signals:
 	void saveButtonClicked(QString);
@@ -86,6 +104,9 @@ class tableDesignerWidget: public QWidget {
 	// buttons
 	QPushButton *saveTableButton;
 	QPushButton *cancelButton;
+	
+	bool hasPrimaryKey;
+	int primaryKey;
 };
 
 #endif

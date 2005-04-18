@@ -25,6 +25,7 @@
 #include <vector>
 
 class tableDesigner;
+class tableEditor;
 class tableModel;
 class objButtonList;
 class objListView;
@@ -86,7 +87,7 @@ class dbWindow: public QMainWindow {
 	QToolBar *mainTb;
 	
 	int openObject;
-	std::vector<tableModel*> tables; // tables
+	std::vector<std::pair<tableModel*, tableEditor*> > tables; // tables
 	
 	tableDesigner *newTableDesigner;
 };
