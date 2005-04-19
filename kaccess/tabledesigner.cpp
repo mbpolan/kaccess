@@ -35,15 +35,15 @@
 #include "widgets.h"
 
 // graphics
+#include "icons/insert_row.xpm"
 #include "icons/primary_key.xpm"
 
 // tableDesigner constructor
 tableDesigner::tableDesigner(QWidget *parent, const char *name): QMainWindow(parent, name) {
     setCaption("Designing table");
-    setMinimumSize(800, 600);
     
     designer=new tableDesignerWidget(this);
-    designer->setMinimumSize(800, 600);
+    designer->setMinimumSize(this->width(), this->height());
     table=designer->table;
     this->setCentralWidget(designer);
     
@@ -65,16 +65,22 @@ void tableDesigner::hideAndClear() {
 // mathod to create the actions
 void tableDesigner::makeActions() {
     QPixmap primary_key=QPixmap((const char**) primary_key_xpm); // primary key graphic
+    QPixmap insert_row=QPixmap((const char**) insert_row_xpm); // xpm for insert row action
     
     primaryKeyAct=new QAction(tr("Primary Key"), QString::null, this);
     primaryKeyAct->setIconSet(primary_key);
     connect(primaryKeyAct, SIGNAL(activated()), designer, SLOT(setPrimaryKey()));
+    
+    insertRowAct=new QAction(tr("Insert rows"), QString::null, this);
+    insertRowAct->setIconSet(insert_row);
+    connect(insertRowAct, SIGNAL(activated()), designer, SLOT(insertNewRows()));
 };
 
 // make toolbars
 void tableDesigner::makeToolbars() {
     mainToolbar=new QToolBar(this, tr("Table"));
     primaryKeyAct->addTo(mainToolbar);
+    insertRowAct->addTo(mainToolbar);
     
     moveDockWindow(mainToolbar, Qt::DockTop);
 };
@@ -186,7 +192,6 @@ void tableDesignerWidget::broadcastSaveButtonClicked() {
 };
 
 // slot to set a primary key
-// TODO: still gotta debug this and make sure it works
 void tableDesignerWidget::setPrimaryKey() {
     // set a new key
     integerInputDialog id(table->numRows(), 1, "Enter row to set as a primary key", "Primary Key",
@@ -240,25 +245,29 @@ void tableDesignerWidget::setPrimaryKey() {
 	    primaryKey=-1;
 	}
     }
-		
-	    // first clear all rows
-	    /*
-	    std::stringstream ss;
-	    for (int i=i; i<table->numRows()+1; i++) {
-		// careful not to add too many numbers
-		if (i!=row) {
-		    ss << i;
-		    h->setLabel(i, ss.str().c_str());
-		    ss.str("");
-		}
-	    }
-		
-	    // now add a label stating that the key is set
-	    h->setLabel(row-1, "*P*");
-	    primaryKey=row-1;
-	    hasPrimaryKey=true;
-	    
-	else
-	    QMessageBox::warning(this, "Error", "You must enter a valid row!");  */
 };
+
+// slot to insert a new row
+void tableDesignerWidget::insertNewRows() {
+    integerInputDialog id(50, 1, "How many rows should be added?", "Insert Rows", this);
+    id.show();
+    id.raise();
+    id.setActiveWindow();
+    
+    // accepted to insert rows
+    if (id.exec()) {
+	int count=id.getValue();
+	int oldCount=table->numRows(); // original amount of rows
 	
+	// ask the table to insert more rows
+	table->insertRows(table->numRows(), count);
+	
+	// add a combobox to the newly inserted rows
+	int start=oldCount; // start of first new row
+	for (int i=0; i<count; i++) {
+	    table->setItem(start, 1, new QComboTableItem(table, data_types, false));
+	    start+=1;
+	}
+	    
+    }
+};

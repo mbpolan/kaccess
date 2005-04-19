@@ -59,7 +59,9 @@ class tableDesigner: public QMainWindow {
 	QTable *table;
 	tableDesignerWidget *designer;
 	
+	// actions
 	QAction *primaryKeyAct;
+	QAction *insertRowAct;
 	
 	// private methods
 	void makeActions();
@@ -86,6 +88,7 @@ class tableDesignerWidget: public QWidget {
 	void updateCellDescription(int, int);
 	void broadcastSaveButtonClicked();
 	void setPrimaryKey();
+	void insertNewRows();
 	
     signals:
 	void saveButtonClicked(QString);

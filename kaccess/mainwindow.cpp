@@ -32,6 +32,7 @@
 
 // our main window constructor
 mainWindow::mainWindow(QWidget *parent, const char *name): QMainWindow(parent, name) {
+    setCaption("KAccess CVS");
     makeActions();
     makeMenus();
     makeToolbars();
