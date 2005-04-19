@@ -85,7 +85,7 @@ class tableDesignerWidget: public QWidget {
     public slots:
 	void updateCellDescription(int, int);
 	void broadcastSaveButtonClicked();
-	void setPrimaryKey(bool);
+	void setPrimaryKey();
 	
     signals:
 	void saveButtonClicked(QString);

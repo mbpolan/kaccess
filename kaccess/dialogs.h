@@ -22,11 +22,13 @@
 #define dialogs_h
 
 #include <qdialog.h>
+#include <qspinbox.h>
 
 class QGridLayout;
 class QLabel;
 class QLineEdit;
 class QPushButton;
+class QSlider;
 class QTabWidget;
 class QTextEdit;
 
@@ -67,6 +69,27 @@ class aboutKAccessDialog: public QDialog {
 	QLabel *kaccessLabel;
 	
 	QPushButton *okButton;
+};
+
+// input dialog with a spinbox with a slider
+class integerInputDialog: public QDialog {
+    public:
+	integerInputDialog(int minVal=1, int maxVal=50, QString instrMsg="Enter a value to use.", 
+			   QString title="Query", QWidget *parent=0, const char *name=0);
+	
+	int getValue() const {return spinBox->value();}
+	
+    private:
+	QGridLayout *grid;
+	QLabel *titleLabel;
+	
+	// slider and spinbox
+	QSlider *hSlider;
+	QSpinBox *spinBox;
+	
+	// buttons
+	QPushButton *okButton;
+	QPushButton *cancelButton;
 };
 
 #endif

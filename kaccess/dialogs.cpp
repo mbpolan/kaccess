@@ -22,6 +22,8 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
+#include <qslider.h>
+#include <qspinbox.h>
 #include <qtabwidget.h>
 #include <qtextedit.h>
 
@@ -132,5 +134,47 @@ aboutKAccessDialog::aboutKAccessDialog(QWidget *parent, const char *name): QDial
 	grid->setRowSpacing(i, 3);
     
     // margin
+    grid->setMargin(3);
+};
+
+/*********************************************************************
+  * integerInputDialog dialog *
+  ********************************************************************/
+
+// integerInput dialog constructor
+integerInputDialog::integerInputDialog(int maxVal, int minVal, QString instrMsg, QString title, QWidget *parent, const char *name): 
+	QDialog(parent, name) {
+    
+    setCaption(title);
+    grid=new QGridLayout(this, 4, 2);
+    
+    // message across the top of the widget
+    titleLabel=new QLabel(instrMsg, this);
+    
+    // spin box
+    // syntax: minimum value, maximum value, steps (1), parent, name
+    spinBox=new QSpinBox(minVal, maxVal, 1, this);
+    
+    // slider
+    hSlider=new QSlider(minVal, maxVal, 1, minVal, Qt::Horizontal, this);
+    
+    // buttons
+    okButton=new QPushButton("Ok", this);
+    cancelButton=new QPushButton("Cancel", this);
+    connect(okButton, SIGNAL(clicked()), SLOT(accept()));
+    connect(cancelButton, SIGNAL(clicked()), SLOT(reject()));
+    
+    // add the widgets to the grid layout manager
+    grid->addMultiCellWidget(titleLabel, 0, 0, 0, 1); // title label (2 cells)
+    grid->addWidget(spinBox, 1, 0); // spin box
+    grid->addMultiCellWidget(hSlider, 2, 2, 0, 1); // slider (2 cells)
+    grid->addWidget(okButton, 3, 0); // ok button
+    grid->addWidget(cancelButton, 3, 1); // cancel button
+    
+    // connect the two widgets (slider and spin box)
+    connect(hSlider, SIGNAL(valueChanged(int)), spinBox, SLOT(setValue(int)));
+    connect(spinBox, SIGNAL(valueChanged(int)), hSlider, SLOT(setValue(int)));
+    
+    // set a margin
     grid->setMargin(3);
 };

@@ -25,6 +25,7 @@
 #include <qstringlist.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
+#include <qpixmap.h>
 #include <qmessagebox.h>
 #include <qtoolbar.h>
 #include <sstream>
@@ -32,6 +33,9 @@
 #include "dialogs.h"
 #include "tabledesigner.h"
 #include "widgets.h"
+
+// graphics
+#include "icons/primary_key.xpm"
 
 // tableDesigner constructor
 tableDesigner::tableDesigner(QWidget *parent, const char *name): QMainWindow(parent, name) {
@@ -60,9 +64,11 @@ void tableDesigner::hideAndClear() {
 
 // mathod to create the actions
 void tableDesigner::makeActions() {
+    QPixmap primary_key=QPixmap((const char**) primary_key_xpm); // primary key graphic
+    
     primaryKeyAct=new QAction(tr("Primary Key"), QString::null, this);
-    primaryKeyAct->setToggleAction(true);
-    connect(primaryKeyAct, SIGNAL(toggled(bool)), designer, SLOT(setPrimaryKey(bool)));
+    primaryKeyAct->setIconSet(primary_key);
+    connect(primaryKeyAct, SIGNAL(activated()), designer, SLOT(setPrimaryKey()));
 };
 
 // make toolbars
@@ -87,14 +93,9 @@ tableDesignerWidget::tableDesignerWidget(QWidget *parent, const char *name):
     
     // set a data type field
     fillDataTypeBox(data_types);
-
-    // remove row numbering
-    QHeader *h=table->verticalHeader();
-    for (int i=0; i < table->numRows(); i++)
-	h->setLabel(i, "");
     
     // set column labels
-    h=table->horizontalHeader();
+    QHeader *h=table->horizontalHeader();
     h->setLabel(0, "Field Name");
     h->setLabel(1, "Data Type");
     h->setLabel(2, "Field Description");
@@ -186,38 +187,78 @@ void tableDesignerWidget::broadcastSaveButtonClicked() {
 
 // slot to set a primary key
 // TODO: still gotta debug this and make sure it works
-void tableDesignerWidget::setPrimaryKey(bool set) {
-/*
+void tableDesignerWidget::setPrimaryKey() {
     // set a new key
-    if (set) {
-	saveDialog sd("Key", "Enter row number to be set as a primary key", this);
-	sd.show();
-	sd.raise();
-	sd.setActiveWindow();
+    integerInputDialog id(table->numRows(), 1, "Enter row to set as a primary key", "Primary Key",
+			      this, "pkey dialog");
+    id.show();
+    id.raise();
+    id.setActiveWindow();
 	
-	if (sd.exec()) {
-	    int row=atoi(sd.getText().ascii());
+    // accept the new value
+    if (id.exec()) {
+	int row=id.getValue();
+	std::stringstream ss;
 	    
-	    // make sure the row is valid
-	    if (row-1 <=table->numRows() && row-1 >=0) {
-		QHeader *h=table->verticalHeader();
+	// make sure the row is valid
+	QHeader *h=table->verticalHeader();
+	if (row-1 <=table->numRows() && row-1 >=0) {
+	    // already set
+	    if (hasPrimaryKey) {
+		// first we restore the row numbers
+		for (int i=0; i<table->numRows(); i++) {
+		    ss << i+1;
+		    h->setLabel(i, ss.str().c_str());
+		    ss.str("");
+		}
+		
+		// now we find the row and set the label
 		h->setLabel(row-1, "*P*");
-		primaryKey=row-1;
-		hasPrimaryKey=true;
 	    }
+	    
+	    // not set yet
+	    else {
+		// simply set the label
+		h->setLabel(row-1, "*P*");
+	    }
+	    
+	    hasPrimaryKey=true;
+	    primaryKey=row;
+	}
+	
+	// unset a previous key
+	else if (row==0) {
+	    // restore the rows
+	    for (int i=0; i<table->numRows(); i++) {
+		ss << i+1;
+		h->setLabel(i, ss.str().c_str());
+		ss.str("");
+	    }
+	    
+	    // and change variables
+	    hasPrimaryKey=false;
+	    primaryKey=-1;
 	}
     }
-    
-    // unset a key
-    else {
-	std::stringstream ss;
-	ss << primaryKey;
-	
-	QHeader *h=table->verticalHeader();
-	h->setLabel(primaryKey, ss.str().c_str());
-	primaryKey=-1;
-	hasPrimaryKey=false;
-    }
-    */
+		
+	    // first clear all rows
+	    /*
+	    std::stringstream ss;
+	    for (int i=i; i<table->numRows()+1; i++) {
+		// careful not to add too many numbers
+		if (i!=row) {
+		    ss << i;
+		    h->setLabel(i, ss.str().c_str());
+		    ss.str("");
+		}
+	    }
+		
+	    // now add a label stating that the key is set
+	    h->setLabel(row-1, "*P*");
+	    primaryKey=row-1;
+	    hasPrimaryKey=true;
+	    
+	else
+	    QMessageBox::warning(this, "Error", "You must enter a valid row!");  */
 };
 	
