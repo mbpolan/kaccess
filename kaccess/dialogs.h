@@ -64,6 +64,7 @@ class aboutKAccessDialog: public QDialog {
 	QTabWidget *tabBox;
 	QLabel *aboutBox;
 	QLabel *devBox;
+	QLabel *imageLabel;
 	QTextEdit *licenseBox;
 	
 	QLabel *kaccessLabel;

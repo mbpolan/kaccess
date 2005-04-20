@@ -26,8 +26,12 @@
 #include <qspinbox.h>
 #include <qtabwidget.h>
 #include <qtextedit.h>
+#include <qpixmap.h>
 
 #include "dialogs.h"
+
+// graphics
+#include "icons/small_logo.xpm" // small logo
 
 /*********************************************************************
   * saveDialog widget *
@@ -85,7 +89,7 @@ aboutKAccessDialog::aboutKAccessDialog(QWidget *parent, const char *name): QDial
     setCaption("About KAccess");
     setFixedSize(410, 290);
     
-    grid=new QGridLayout(this, 3, 1);
+    grid=new QGridLayout(this, 3, 2);
     tabBox=new QTabWidget(this);
     
     // general info about KAccess
@@ -119,15 +123,21 @@ aboutKAccessDialog::aboutKAccessDialog(QWidget *parent, const char *name): QDial
     okButton=new QPushButton("Ok", this);
     connect(okButton, SIGNAL(clicked()), SLOT(accept()));
     
+    // small loho graphic
+    QPixmap logo_small=QPixmap((const char**) small_logo_xpm);
+    imageLabel=new QLabel(QString::null, this);
+    imageLabel->setPixmap(logo_small);
+    
     // now we add the widgets into the grid
-    grid->addWidget(kaccessLabel, 0, 0);
-    grid->addWidget(tabBox, 1, 0);
+    grid->addWidget(imageLabel, 0, 0);
+    grid->addWidget(kaccessLabel, 0, 1);
+    grid->addMultiCellWidget(tabBox, 1, 1, 0, 1);
     grid->addWidget(okButton, 2, 0);
     
     // stretch factors
-    grid->setRowStretch(0, 3);
-    grid->setRowStretch(1, 8);
-    grid->setRowStretch(2, 2);
+    grid->setRowStretch(0, 2);
+    grid->setRowStretch(1, 6);
+    grid->setRowStretch(2, 1);
     
     // row spacing
     for (int i=0; i<grid->numRows(); i++)
