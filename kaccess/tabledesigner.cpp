@@ -169,7 +169,7 @@ void tableDesignerWidget::updateCellDescription(int row, int col) {
 	    
 	case 0x01: msgLabel->setText("<font color=blue>What kind of data should this field store is set here.</font>"); break;
 	    
-	case 0x02: msgLabel->setText("<font color=blue>Enter a description of this field to help you remeber its " 
+	case 0x02: msgLabel->setText("<font color=blue>Enter a description of this field to help you remember its " 
 				     "purpose later."); break;
     }
     
