@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2005 by the KAccess Team                                       *
+ *   Copyright (C) 2005 by the KAccess Team                                *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,14 +19,26 @@
 // main.cpp: main program file
 
 #include <qapplication.h>
+#include <qpixmap.h>
+#include <qsplashscreen.h>
+
 #include "mainwindow.h"
 
+// graphics
+#include "icons/splash.xpm"
+
+// main
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
+    QPixmap splash=QPixmap((const char**) splash_xpm);
+    QSplashScreen *splashScreen=new QSplashScreen(splash);
+    splashScreen->show();
+    
     mainWindow mw;
     
     app.setMainWidget(&mw);
     mw.show();
+    splashScreen->finish(&mw);
     
     return app.exec();
 };
