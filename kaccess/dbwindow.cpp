@@ -39,6 +39,9 @@
 #include "tablemodel.h"
 
 // graphics
+#include "icons/design_form.xpm"
+#include "icons/design_report.xpm"
+#include "icons/design_table.xpm"
 #include "icons/new_form.xpm"
 #include "icons/new_report.xpm"
 #include "icons/new_table.xpm"
@@ -56,6 +59,7 @@ dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMain
     
     makePixmaps();
     makeActions();
+    makeToolbars();
     
     // create the side panel
     sidePanel=new QDockWindow(this);
@@ -78,6 +82,7 @@ dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMain
     
     setCentralWidget(objLists[0]);
     
+    moveDockWindow(mainTb, Qt::Top);
     moveDockWindow(sidePanel, Qt::Left);
     
     newTableDesigner=new tableDesigner(this);
@@ -87,12 +92,18 @@ dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMain
 // create pixmaps
 void dbWindow::makePixmaps() {
     // generate pixmaps
+    QPixmap gfx_design_form=QPixmap((const char**) design_form_xpm);
+    QPixmap gfx_design_report=QPixmap((const char**) design_report_xpm);
+    QPixmap gfx_design_table=QPixmap((const char**) design_table_xpm);
     QPixmap gfx_new_form=QPixmap((const char**) new_form_xpm);
     QPixmap gfx_new_report=QPixmap((const char**) new_report_xpm);
     QPixmap gfx_new_table=QPixmap((const char**) new_table_xpm);
     QPixmap gfx_open_generic=QPixmap((const char**) open_generic_xpm);
     
     // and add them to th vector
+    gfx.push_back(gfx_design_form);
+    gfx.push_back(gfx_design_report);
+    gfx.push_back(gfx_design_table);
     gfx.push_back(gfx_new_form);
     gfx.push_back(gfx_new_report);
     gfx.push_back(gfx_new_table);
@@ -106,6 +117,7 @@ void dbWindow::makeActions() {
     connect(openThingAct, SIGNAL(activated()), this, SLOT(openSelected()));
     
     designThingAct=new QAction(tr("Design"), tr(""), this);
+    designThingAct->setIconSet(gfx[GFX_DESIGN_TABLE]);
     connect(designThingAct, SIGNAL(activated()), this, SLOT(designSelected()));
     
     newThingAct=new QAction(tr("New"), tr(""), this);
@@ -153,7 +165,6 @@ void dbWindow::openReportWizard() {
 };
 
 // function to open a table
-// TODO: this needs to be redone
 void dbWindow::openTable(QListViewItem *item) {
     QTable *t;
     int pos=-1;
@@ -197,6 +208,7 @@ void dbWindow::openSelected() {
 void dbWindow::viewObject(int id) {
     objLists[openObject]->hide();
 
+    // switch the list view first
     switch(id) {
                  default: break;
 	 case 1: viewTables(); break;
@@ -237,6 +249,11 @@ void dbWindow::parseReportItem(QListViewItem *item) {
 void dbWindow::viewTables() {
     setCentralWidget(objLists[0]);
     objLists[0]->show();
+    
+    // change toolbar graphics
+    newThingAct->setIconSet(gfx[GFX_NEW_TABLE]);
+    designThingAct->setIconSet(gfx[GFX_DESIGN_TABLE]);
+    
     return;
 };
 
@@ -244,6 +261,11 @@ void dbWindow::viewTables() {
 void dbWindow::viewForms() {
     setCentralWidget(objLists[1]);
     objLists[1]->show();
+    
+    // change toolbar graphics
+    newThingAct->setIconSet(gfx[GFX_NEW_FORM]);
+    designThingAct->setIconSet(gfx[GFX_DESIGN_FORM]);
+    
     return;
 };
 
@@ -251,6 +273,11 @@ void dbWindow::viewForms() {
 void dbWindow::viewReports() {
     setCentralWidget(objLists[2]);
     objLists[2]->show();
+    
+    // change toolbar graphics
+    newThingAct->setIconSet(gfx[GFX_NEW_REPORT]);
+    designThingAct->setIconSet(gfx[GFX_DESIGN_REPORT]);
+    
     return;
 };
 

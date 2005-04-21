@@ -39,10 +39,13 @@ class QTable;
 class QListViewItem;
 
 // graphic defines
-#define GFX_NEW_FORM 		0
-#define GFX_NEW_REPORT 	1
-#define GFX_NEW_TABLE 		2
-#define GFX_OPEN_GENERIC 	3
+#define GFX_DESIGN_FORM	0
+#define GFX_DESIGN_REPORT	1
+#define GFX_DESIGN_TABLE	2
+#define GFX_NEW_FORM 		3
+#define GFX_NEW_REPORT 	4
+#define GFX_NEW_TABLE 		5
+#define GFX_OPEN_GENERIC 	6
 
 class dbWindow: public QMainWindow {
     Q_OBJECT
