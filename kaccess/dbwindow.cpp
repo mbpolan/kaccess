@@ -196,11 +196,49 @@ void dbWindow::newSelected() {
 
 // slot for designing a new object
 void dbWindow::designSelected() {
+    switch(openObject) {
+	    case 0: openTableDesigner(); break;
+	    case 1: openFormDesigner(); break;
+	    //case 2: openReportDesigner(); break; // TODO: report designer
+    }
+    
     return;
 };
 
 // slot for opening the selected thing
 void dbWindow::openSelected() {
+    objListViewItem *item=dynamic_cast<objListViewItem*> (objLists[openObject]->selectedItem());
+    if (!item)
+	return;
+    
+    switch(openObject) {
+	    case 0: {
+		    if (item->isActionItem())
+			openTableDesigner();
+		    else
+			openTable((QListViewItem*) item);
+	    }
+	    break;
+		    
+	    case 1: {
+		    if (item->isActionItem())
+			openFormDesigner();
+			
+		    else
+			openForm((QListViewItem*) item);
+	    }
+	    break;
+	    
+	    case 2: {
+		    if (item->isActionItem())
+			openReportWizard();
+			
+		    else
+			openReport((QListViewItem*) item); break;
+	    }
+	    break;
+    }
+		    
     return;
 };
 
