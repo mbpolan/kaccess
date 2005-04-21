@@ -47,6 +47,7 @@ tableDesigner::tableDesigner(QWidget *parent, const char *name): QMainWindow(par
     table=designer->table;
     this->setCentralWidget(designer);
     
+    makePixmaps();
     makeActions();
     makeToolbars();
     
@@ -54,6 +55,15 @@ tableDesigner::tableDesigner(QWidget *parent, const char *name): QMainWindow(par
     connect(designer, SIGNAL(saveButtonClicked(QString)), SIGNAL(tdSaveButtonClicked(QString)));
     connect(designer, SIGNAL(saveButtonClicked(QString)), SLOT(hideAndClear()));
     connect(designer, SIGNAL(cancelButtonClicked()), SLOT(hideAndClear()));
+};
+
+// make the pixmaps
+void tableDesigner::makePixmaps() {
+    QPixmap gfx_insert_row=QPixmap((const char**) insert_row_xpm);
+    QPixmap gfx_primary_key=QPixmap((const char**) primary_key_xpm);
+    
+    gfx.push_back(gfx_insert_row);
+    gfx.push_back(gfx_primary_key);
 };
 
 // slot to clear and hide the table designer
@@ -64,15 +74,12 @@ void tableDesigner::hideAndClear() {
 
 // mathod to create the actions
 void tableDesigner::makeActions() {
-    QPixmap primary_key=QPixmap((const char**) primary_key_xpm); // primary key graphic
-    QPixmap insert_row=QPixmap((const char**) insert_row_xpm); // xpm for insert row action
-    
     primaryKeyAct=new QAction(tr("Primary Key"), QString::null, this);
-    primaryKeyAct->setIconSet(primary_key);
+    primaryKeyAct->setIconSet(gfx[GFX_PRIMARY_KEY]);
     connect(primaryKeyAct, SIGNAL(activated()), designer, SLOT(setPrimaryKey()));
     
     insertRowAct=new QAction(tr("Insert rows"), QString::null, this);
-    insertRowAct->setIconSet(insert_row);
+    insertRowAct->setIconSet(gfx[GFX_INSERT_ROW]);
     connect(insertRowAct, SIGNAL(activated()), designer, SLOT(insertNewRows()));
 };
 

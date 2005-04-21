@@ -38,6 +38,12 @@
 #include "tableeditor.h"
 #include "tablemodel.h"
 
+// graphics
+#include "icons/new_form.xpm"
+#include "icons/new_report.xpm"
+#include "icons/new_table.xpm"
+#include "icons/open_generic.xpm"
+
 // the database overview window inside the workspace
 dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMainWindow(parent, name, WDestructiveClose) {
     // set the title 
@@ -48,6 +54,7 @@ dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMain
     setMinimumSize(400, 300);
     openObject=0;
     
+    makePixmaps();
     makeActions();
     
     // create the side panel
@@ -77,15 +84,32 @@ dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMain
     connect(newTableDesigner, SIGNAL(tdSaveButtonClicked(QString)), SLOT(saveTable(QString)));
 };
 
+// create pixmaps
+void dbWindow::makePixmaps() {
+    // generate pixmaps
+    QPixmap gfx_new_form=QPixmap((const char**) new_form_xpm);
+    QPixmap gfx_new_report=QPixmap((const char**) new_report_xpm);
+    QPixmap gfx_new_table=QPixmap((const char**) new_table_xpm);
+    QPixmap gfx_open_generic=QPixmap((const char**) open_generic_xpm);
+    
+    // and add them to th vector
+    gfx.push_back(gfx_new_form);
+    gfx.push_back(gfx_new_report);
+    gfx.push_back(gfx_new_table);
+    gfx.push_back(gfx_open_generic);
+};
+
 // create the various actions
 void dbWindow::makeActions() {
     openThingAct=new QAction(tr("Open"), tr(""), this);
+    openThingAct->setIconSet(gfx[GFX_OPEN_GENERIC]);
     connect(openThingAct, SIGNAL(activated()), this, SLOT(openSelected()));
     
     designThingAct=new QAction(tr("Design"), tr(""), this);
     connect(designThingAct, SIGNAL(activated()), this, SLOT(designSelected()));
     
     newThingAct=new QAction(tr("New"), tr(""), this);
+    newThingAct->setIconSet(gfx[GFX_NEW_TABLE]); // tables are displayed by default
     connect(newThingAct, SIGNAL(activated()), this, SLOT(newSelected()));
 };
 

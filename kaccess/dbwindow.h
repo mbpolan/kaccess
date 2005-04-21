@@ -22,6 +22,7 @@
 #define dbwindow_h
  
 #include <qmainwindow.h>
+#include <qpixmap.h>
 #include <vector>
 
 class tableDesigner;
@@ -37,12 +38,19 @@ class QDockWindow;
 class QTable;
 class QListViewItem;
 
+// graphic defines
+#define GFX_NEW_FORM 		0
+#define GFX_NEW_REPORT 	1
+#define GFX_NEW_TABLE 		2
+#define GFX_OPEN_GENERIC 	3
+
 class dbWindow: public QMainWindow {
     Q_OBJECT
     
     public:
 	dbWindow(const char *dbName, QWidget *parent=0, const char *name=0);
 	
+	void makePixmaps();
 	void makeActions();
 	void makeButtons();
 	void makeToolbars();
@@ -89,7 +97,11 @@ class dbWindow: public QMainWindow {
 	int openObject;
 	std::vector<std::pair<tableModel*, tableEditor*> > tables; // tables
 	
+	// table designer
 	tableDesigner *newTableDesigner;
+	
+	// graphics vector
+	std::vector<QPixmap> gfx;
 };
 
 #endif

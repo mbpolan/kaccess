@@ -22,7 +22,9 @@
 #define tabledesigner_h
 
 #include <qmainwindow.h>
+#include <qpixmap.h>
 #include <qwidget.h>
+#include <vector>
 
 class QAction;
 class QLabel;
@@ -34,6 +36,10 @@ class QTable;
 class QToolBar;
 class descriptionFrame;
 class fieldDataEditor;
+
+// graphic defines
+#define GFX_INSERT_ROW 		0
+#define GFX_PRIMARY_KEY		1
 
 class tableDesignerWidget;
 
@@ -64,8 +70,11 @@ class tableDesigner: public QMainWindow {
 	QAction *insertRowAct;
 	
 	// private methods
+	void makePixmaps();
 	void makeActions();
 	void makeToolbars();
+	
+	std::vector<QPixmap> gfx;
 };
 
 // widget that is used to in class tableDesigner
