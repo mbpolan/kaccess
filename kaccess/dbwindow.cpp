@@ -191,6 +191,16 @@ void dbWindow::openReport(QListViewItem *item) {
 
 // slot for making a new object
 void dbWindow::newSelected() {
+    objListViewItem *item=dynamic_cast<objListViewItem*> (objLists[openObject]->selectedItem());
+    if (!item)
+	return;
+    
+    switch(openObject) {
+                    case 0: openTableDesigner(); break;
+	    case 1: openFormDesigner(); break;
+	    case 2: openReportWizard(); break;
+    }
+    
     return;
 };
 
