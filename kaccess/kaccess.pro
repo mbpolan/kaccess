@@ -1,6 +1,8 @@
 TEMPLATE	= app
 LANGUAGE	= C++
 
+LIBS	+= -lxml2
+
 INCLUDEPATH	+= .
 
 HEADERS	+= dbwindow.h \

@@ -25,8 +25,9 @@
 #include <qpixmap.h>
 #include <vector>
 
+#include "tableeditor.h"
+
 class tableDesigner;
-class tableEditor;
 class tableModel;
 class objButtonList;
 class objListView;
@@ -60,6 +61,10 @@ class dbWindow: public QMainWindow {
 	void makeObjList();
 	
 	void addPreOps();
+	
+	// table related stuff
+	int tableCount() const {return tables.size();}
+	QTable* table(int pos) {return tables[pos].second->getTable();}
 	
 	// i/o methods for the database
 	void openTableDesigner();

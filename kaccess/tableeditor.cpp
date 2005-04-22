@@ -26,6 +26,14 @@
 tableEditor::tableEditor(tableModel *rootTable, QWidget *parent, const char *name): 
 	QMainWindow(parent, name) {
     
+    // caption: Table: NAME
+    QString tName="Table: ";
+    if (rootTable)
+	tName+=rootTable->name;
+    else
+	tName+="Table";
+    setCaption(tName);
+    
     editorWidget=new tableEditorWidget(rootTable, this);
     setCentralWidget(editorWidget);
     

@@ -18,6 +18,8 @@
  ***************************************************************************/
 // mainwindow.cpp: implementations of mainWindow class
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 #include <qaction.h>
 #include <qapplication.h>
 #include <qpopupmenu.h>
@@ -25,10 +27,13 @@
 #include <qworkspace.h>
 #include <qfiledialog.h>
 #include <qmessagebox.h>
+#include <qtable.h>
+#include <sstream>
 
 #include "dbwindow.h"
 #include "dialogs.h"
 #include "mainwindow.h"
+#include "tablemodel.h"
 
 // our main window constructor
 mainWindow::mainWindow(QWidget *parent, const char *name): QMainWindow(parent, name) {
@@ -53,7 +58,7 @@ void mainWindow::makeActions() {
     
     saveDbAct=new QAction(tr("Save database"), tr("Ctrl+S"), this);
     saveDbAct->setStatusTip("Save this database");
-    connect(saveDbAct, SIGNAL(activated()), this, SLOT(slotSaveDb()));
+    connect(saveDbAct, SIGNAL(activated()), this, SLOT(slotSaveDbXML()));
     
     saveDbAsAct=new QAction(tr("Save As"), tr("Alt+S"), this);
     saveDbAct->setStatusTip("Save this database as another file");
@@ -124,9 +129,94 @@ void mainWindow::slotOpenDb() {
     return;
 };
 
-// slot to save a database
-void mainWindow::slotSaveDb() {
-    return;
+// slot to save a database into an XML file
+void mainWindow::slotSaveDbXML() {
+    // the active database overview window
+    dbWindow *dbWin=(dbWindow*) workspace->activeWindow();
+    if (!dbWin)
+	return;
+    
+    std::stringstream ss;
+    xmlDocPtr doc=xmlNewDoc((const xmlChar*) "1.0");
+    xmlNodePtr root, ptr;
+    
+    root=xmlNewDocNode(doc, NULL, ((const xmlChar*) "kaccess-database"), NULL);
+    xmlSetProp(root, (const xmlChar*) "name", ((const xmlChar*) dbWin->caption().ascii())); // db name
+    xmlDocSetRootElement(doc, root);
+    
+    ptr=xmlNewChild(root, NULL, (const xmlChar*) "tables", NULL);
+    int tcount=dbWin->tableCount(); // amount of tables
+    
+    // count of tables
+    ss << tcount;
+    xmlSetProp(ptr, (const xmlChar*) "count", (const xmlChar*) ss.str().c_str());
+    ss.str("");
+    
+    // save the tables
+    xmlNodePtr tbl, struc;
+    for (int i=0; i<tcount; i++) {
+	// table node
+	tbl=xmlNewChild(ptr, NULL, (const xmlChar*) "table", NULL);
+	
+	// first save the table structure
+	// table structure contains the column header labels. when loaded, the headers will form the framework
+	// for a new table.
+	struc=xmlNewChild(tbl, NULL, (const xmlChar*) "structure", NULL);
+	QTable *t=dbWin->table(i);
+	
+	// set a count of items
+	ss << t->numCols();
+	xmlSetProp(struc, (const xmlChar*) "count", (const xmlChar*) ss.str().c_str());
+	ss.str("");
+	
+	// structure is based on columns
+	xmlNodePtr field;
+	QHeader *h=t->horizontalHeader();
+	for (int j=0; j < h->count(); j++) {
+	    // each column is stored as a new node
+	    field=xmlNewChild(struc, NULL, (const xmlChar*) "field", NULL);
+	    
+	    // set the column header label
+	    QString name=h->label(j);
+	    
+	    xmlSetProp(field, (const xmlChar*) "header", (const xmlChar*) name.ascii());
+	    //xmlSetProp(field, (const xmlChar*) "type", (const xmlChar* ) ); // TODO: save type of field
+	}
+	
+	// that's it for structure, now we save the actual table data
+	QTableItem *t_item;
+	xmlNodePtr p, data=xmlNewChild(tbl, NULL, (const xmlChar*) "data", NULL);
+	for (int j=0; j < t->numRows(); j++) {
+	    p=xmlNewChild(data, NULL, (const xmlChar*) "record", NULL); // record node
+	    
+	    // add to the record node
+	    for (int k=0; k < t->numCols(); k++) {
+		t_item=t->item(j, k);
+		
+		// check if this field is blank or not
+		QString t_item_text;
+		if (t_item)
+		    t_item_text=t_item->text();
+		
+		else
+		    t_item_text="";
+		
+		// node name is field0, field1, field2, ...
+		ss << "field" << k;
+		xmlSetProp(p, (const xmlChar*) ss.str().c_str(), (const xmlChar*) t_item_text.ascii());
+		ss.str("");
+	    }
+	}
+    }
+	
+    // assuming everything was ok, we ask the user to a path
+    QString savePath=QFileDialog::getSaveFileName("/home", "KAccess Databases (*kdb)", this, 
+						  "save file dialog", "Save Database");
+    savePath+=".kdb"; // kaccess database file extension
+    
+    xmlKeepBlanksDefault(1);
+    xmlSaveFile(savePath.ascii(), doc);
+		
 };
 
 // slot to save a database as another file
