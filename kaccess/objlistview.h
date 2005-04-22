@@ -22,17 +22,40 @@
 #define objlistview_h
 
 #include <qlistview.h>
+#include <qpixmap.h>
+#include <vector>
 
+class QAction;
 class objListViewItem;
+
+// graphics defines
+#define GFX_REMOVE_TABLE	0
 
 // list view class for displaying tables, reports, etc.
 // TODO: finish up the implementations of this class!!
 class objListView: public QListView {
+    Q_OBJECT
     public:
 	objListView(QWidget *parent=0, const char *name=0);
 	
 	// methods
 	void sortByPriority();
+	
+    private slots:
+	void confirmRemoveTable();
+	
+	void openContextMenu(QListViewItem*, const QPoint&, int);
+	
+    signals:
+	void sigRemoveTable(QString);
+	
+    private:
+	QAction *removeTableAct;
+	
+	void makePixmaps();
+	void makeActions(); // make QActions
+	
+	std::vector<QPixmap> gfx; // graphics
 };
 
 // item class used in the list view

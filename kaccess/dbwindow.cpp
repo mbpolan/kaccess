@@ -18,6 +18,7 @@
  ***************************************************************************/
 // dbwindow.cpp: implementations of dbWindow class
 
+#include <list>
 #include <qgroupbox.h>
 #include <qlistview.h>
 #include <qaction.h>
@@ -78,6 +79,10 @@ dbWindow::dbWindow(const char *dbName, QWidget *parent, const char *name): QMain
 	    objLists[i]->hide();
     }
     
+    // connections
+    connect(objLists[0], SIGNAL(sigRemoveTable(QString)), SLOT(removeTable(QString)));
+    
+    // add some options
     this->addPreOps();
     
     setCentralWidget(objLists[0]);
@@ -148,6 +153,21 @@ void dbWindow::addPreOps() {
     connect(objLists[2], SIGNAL(doubleClicked(QListViewItem*)), this, SLOT(parseReportItem(QListViewItem*)));
 };
 
+// return a pointer to a QTable in the table list
+QTable* dbWindow::table(int pos) {
+    int counter=0;
+    for (tableIterator it=tables.begin(); it != tables.end(); ++it) {
+	if (counter==pos && (*it).first && (*it).second)
+	    return (*it).second->getTable();
+	else
+	    ++counter;
+    }
+    
+    // table not found
+    return NULL;
+};
+
+// slot to open the table designer
 void dbWindow::openTableDesigner() {
     newTableDesigner->show();
     newTableDesigner->raise();
@@ -156,28 +176,30 @@ void dbWindow::openTableDesigner() {
     return;
 };
 
+// slot to open the form designer
 void dbWindow::openFormDesigner() {
     return;
 };
 
+// slot to open the report wizard
 void dbWindow::openReportWizard() {
     return;
 };
 
 // function to open a table
 void dbWindow::openTable(QListViewItem *item) {
-    QTable *t;
-    int pos=-1;
-    for (int i=0; i<tables.size(); i++) {
+    tableEditor *te;
+    for (tableIterator it=tables.begin(); it != tables.end(); ++it) {
 	// found the correct tables
-	if ((tables[i].first && tables[i].second) && tables[i].first->name==item->text(0)) {
-	    pos=i;
+	if (((*it).first && (*it).second) && (*it).first->name==item->text(0)) {
+	    te=(*it).second;
 	    break;
 	}
     }
     
-    if (pos>=0)
-	tables[pos].second->show();
+    // found the table
+    if (te)
+	te->show();
     
     return;
 };
@@ -377,4 +399,19 @@ void dbWindow::saveTable(QString tableName) {
     std::pair<tableModel*, tableEditor*> p(tm, ed);
     tables.push_back(p);
 
+};
+
+// slot to remove a table from the vector
+void dbWindow::removeTable(QString name) {
+    tableIterator it=tables.begin();
+    while(it != tables.end()) {
+	// found table
+	if (((*it).first && (*it).second) && (*it).first->name==name) {
+	    it=tables.erase(it);
+	    break;
+	}
+	
+	else
+	    ++it;
+    }
 };

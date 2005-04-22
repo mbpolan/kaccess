@@ -24,6 +24,7 @@
 #include <qmainwindow.h>
 #include <qpixmap.h>
 #include <vector>
+#include <list>
 
 #include "tableeditor.h"
 
@@ -38,6 +39,9 @@ class QToolbar;
 class QDockWindow;
 class QTable;
 class QListViewItem;
+
+// typedef for tables list
+typedef std::list<std::pair<tableModel*, tableEditor*> >::iterator tableIterator;
 
 // graphic defines
 #define GFX_DESIGN_FORM	0
@@ -64,7 +68,7 @@ class dbWindow: public QMainWindow {
 	
 	// table related stuff
 	int tableCount() const {return tables.size();}
-	QTable* table(int pos) {return tables[pos].second->getTable();}
+	QTable* table(int pos);
 	
 	// i/o methods for the database
 	void openTableDesigner();
@@ -89,6 +93,7 @@ class dbWindow: public QMainWindow {
 	void viewReports();
 	
 	void saveTable(QString);
+	void removeTable(QString);
 	
     private:
 	QDockWindow *sidePanel;
@@ -103,7 +108,7 @@ class dbWindow: public QMainWindow {
 	QToolBar *mainTb;
 	
 	int openObject;
-	std::vector<std::pair<tableModel*, tableEditor*> > tables; // tables
+	std::list<std::pair<tableModel*, tableEditor*> > tables; // tables
 	
 	// table designer
 	tableDesigner *newTableDesigner;
