@@ -167,6 +167,20 @@ QTable* dbWindow::table(int pos) {
     return NULL;
 };
 
+// method to get a name of a table
+QString dbWindow::tableName(int pos) {
+    int counter=0;
+    for (tableIterator it=tables.begin(); it != tables.end(); ++it) {
+	if (counter==pos && (*it).first && (*it).second)
+	    return (*it).second->getName();
+	else
+	    ++counter;
+    }
+    
+    // table not found
+    return QString::null;
+};
+
 // slot to open the table designer
 void dbWindow::openTableDesigner() {
     newTableDesigner->show();
@@ -211,12 +225,18 @@ void dbWindow::openForm(QListViewItem *item) {
 void dbWindow::openReport(QListViewItem *item) {
 }
 
+// method to add an object to the lists
+void dbWindow::addTableObj(tableModel *tm, tableEditor *te) {
+    QString name=tm->name;
+    std::pair<tableModel*, tableEditor*> p(tm, te);
+    tables.push_back(p);
+    
+    // now add it to the list view
+    objListViewItem *objItem=new objListViewItem(false, dynamic_cast<objListViewItem*> (objLists[OBJLIST_TABLE]->firstChild()), name);
+};
+
 // slot for making a new object
 void dbWindow::newSelected() {
-    objListViewItem *item=dynamic_cast<objListViewItem*> (objLists[openObject]->selectedItem());
-    if (!item)
-	return;
-    
     switch(openObject) {
                     case 0: openTableDesigner(); break;
 	    case 1: openFormDesigner(); break;

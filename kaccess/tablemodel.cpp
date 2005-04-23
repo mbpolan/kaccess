@@ -33,7 +33,7 @@ void tableModel::addColumn(QString label, int dataType, QString descr) {
 
 // convert this model to a QTable
 QTable* tableModel::toQTable(QWidget *parent) {
-    QTable *nt=new QTable(rows+1, columns, parent);
+    QTable *nt=new QTable(rows, colDatas.size(), parent);
     QHeader *h=nt->horizontalHeader();
     
     for (int i=0; i<colDatas.size(); i++) {
@@ -42,7 +42,7 @@ QTable* tableModel::toQTable(QWidget *parent) {
     
     // get rid of default row labels
     h=nt->verticalHeader();
-    for (int i=0; i<rows+1; i++) {
+    for (int i=0; i<rows; i++) {
 	h->setLabel(i, "");
     }
     

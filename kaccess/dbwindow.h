@@ -52,12 +52,18 @@ typedef std::list<std::pair<tableModel*, tableEditor*> >::iterator tableIterator
 #define GFX_NEW_TABLE 		5
 #define GFX_OPEN_GENERIC 	6
 
+// list defines
+#define OBJLIST_TABLE		0
+#define OBJLIST_FORM		1
+#define OBJLIST_REPORT		2
+
 class dbWindow: public QMainWindow {
     Q_OBJECT
     
     public:
 	dbWindow(const char *dbName, QWidget *parent=0, const char *name=0);
 	
+	// various methods to build the interface
 	void makePixmaps();
 	void makeActions();
 	void makeButtons();
@@ -69,6 +75,7 @@ class dbWindow: public QMainWindow {
 	// table related stuff
 	int tableCount() const {return tables.size();}
 	QTable* table(int pos);
+	QString tableName(int pos);
 	
 	// i/o methods for the database
 	void openTableDesigner();
@@ -77,6 +84,9 @@ class dbWindow: public QMainWindow {
 	void openTable(QListViewItem*);
 	void openForm(QListViewItem*);
 	void openReport(QListViewItem*);
+	
+	// other methods
+	void addTableObj(tableModel*, tableEditor*);
 	
     public slots:
 	void newSelected();

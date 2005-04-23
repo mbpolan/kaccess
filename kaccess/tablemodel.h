@@ -39,7 +39,7 @@ class tableModel {
 	void setRows(int r) {rows=r;}
 	int getRows() const {return rows;}
 	
-	void addColumn(QString, int, QString);
+	void addColumn(QString label, int dataType, QString description);
 	std::pair<QString, columnData*> columnAt(int);
 	
 	QTable *toQTable(QWidget *parent); // convert to a QTable and return a pointer to it
@@ -48,7 +48,6 @@ class tableModel {
     private:
 	int rows, columns;
 	std::vector<std::pair<QString, columnData*> > colDatas;
-	
 };
 
 // class that stores information about a field

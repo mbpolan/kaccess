@@ -49,6 +49,11 @@ QTable* tableEditor::getTable() const {
     return editorWidget->getTable();
 };
 
+// method to get a table name
+QString tableEditor::getName() const {
+    return editorWidget->getName();
+};
+
 /*************************************************************************
   * start tableEditorWidget implementations				 *
   ************************************************************************/
@@ -64,12 +69,14 @@ tableEditorWidget::tableEditorWidget(tableModel *rootTable, QWidget *parent, con
     if (nTable) {
 	table=nTable;
 	setCaption("Table: Table"); // TODO: table naming
+	tname=rootTable->name;
     }
     
     // this shouldn't happen, but just in case it does, we'll allocate memory for a dummy table
     else {
 	table=new QTable(2, 1, this);
 	setCaption("Table: Table");
+	tname="Table";
     }
     
     // add the table to the grid layout

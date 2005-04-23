@@ -39,6 +39,8 @@ class tableEditor: public QMainWindow {
 	void setTable(QTable *tb);
 	QTable* getTable() const;
 	
+	QString getName() const;
+	
     private:
 	tableEditorWidget *editorWidget;
 };
@@ -52,10 +54,13 @@ class tableEditorWidget: public QWidget {
 	void setTable(QTable *tb) {if (table) delete table; table=tb;}
 	QTable* getTable() const {return table;}
 	
+	QString getName() const {return tname;}
+	
     private:
 	QGridLayout *grid;
 	
 	QTable *table; // the main table
+	QString tname; // table name
 };
 	
 #endif

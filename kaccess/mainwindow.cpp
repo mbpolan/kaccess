@@ -18,16 +18,18 @@
  ***************************************************************************/
 // mainwindow.cpp: implementations of mainWindow class
 
+#include <iostream>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <qaction.h>
 #include <qapplication.h>
-#include <qpopupmenu.h>
-#include <qmenubar.h>
-#include <qworkspace.h>
 #include <qfiledialog.h>
+#include <qlineedit.h>
+#include <qmenubar.h>
 #include <qmessagebox.h>
+#include <qpopupmenu.h>
 #include <qtable.h>
+#include <qworkspace.h>
 #include <sstream>
 
 #include "dbwindow.h"
@@ -54,7 +56,7 @@ void mainWindow::makeActions() {
     
     openDbAct=new QAction(tr("Open database"), tr("Ctrl+O"), this);
     openDbAct->setStatusTip("Open a database");
-    connect(openDbAct, SIGNAL(activated()), this, SLOT(slotOpenDb()));
+    connect(openDbAct, SIGNAL(activated()), this, SLOT(slotOpenDbXML()));
     
     saveDbAct=new QAction(tr("Save database"), tr("Ctrl+S"), this);
     saveDbAct->setStatusTip("Save this database");
@@ -108,7 +110,7 @@ void mainWindow::makeToolbars() {
 // slot for making a new database
 // TODO: close all open databases prior to opening a new one
 void mainWindow::slotNewDb() {
-    QString f=QFileDialog::getSaveFileName("/home/mike", "KAccess Databases (*kdb)", this, "open file dialog", "Save Database" );
+    QString f=QFileDialog::getSaveFileName("/home", "KAccess Databases (*kdb)", this, "open file dialog", "Save Database" );
     
     if (f!=QString::null) {
 	saveDialog sd("New Database", "Enter a name for this database", this);
@@ -125,7 +127,105 @@ void mainWindow::slotNewDb() {
 };
 
 // slot to open a database
-void mainWindow::slotOpenDb() {
+void mainWindow::slotOpenDbXML() {
+    QString path=QFileDialog::getOpenFileName("/home", "KAccess Databases (*kdb)", this, "open file dialog", "Open Database");
+    xmlDocPtr doc=xmlParseFile(path.ascii());
+    std::stringstream ss;
+    
+    if (doc) {
+	xmlNodePtr root, ptr;
+	root=xmlDocGetRootElement(doc);
+	
+	// check if this is a valid file
+	if (strcmp((const char*) root->name, "kaccess-database")!=0) {
+	    QMessageBox::critical(this, "Load error", "Unable to load database! The file is either corrupt or unsupported.");
+	    return;
+	}
+	
+	// database name
+	QString dbName=(const char*) xmlGetProp(root, (const xmlChar*) "name");
+	
+	// the database overview window.note: keep this hidden until loading is complete
+	dbWindow *dbWin=new dbWindow(dbName, workspace);
+	dbWin->hide();
+	
+	// descend into the document's children nodes
+	ptr=root->children;
+	
+	// load tables first
+	int tcount=atoi((const char*) xmlGetProp(ptr, (const xmlChar*) "count")); // count of tables
+	
+	// table queue
+	std::vector<std::pair<tableModel*, tableEditor*> > tableQueue;
+	
+	// if there are any tables, load them
+	if (tcount > 0) {	    
+	    xmlNodePtr tbl=ptr->children, struc;
+	    tableModel *tmodel;
+	    QString tableName;
+	    
+	    // load each table
+	    for (int i=0; i<tcount; i++) {
+		// make a new model
+		tmodel=new tableModel;
+		struc=tbl->children;
+		
+		// parse the table structure and generate a table
+		int scount=atoi((const char*) xmlGetProp(struc, (const xmlChar*) "count")); // amount of entries here	
+		
+		// set the table name
+		tableName=(const char*) xmlGetProp(tbl, (const xmlChar*) "name");
+		tmodel->name=tableName;
+		
+		// load columns
+		xmlNodePtr field=struc->children;
+		for (int j=0; j<scount; j++) {
+		    QString header=(const char*) xmlGetProp(field, (const xmlChar*) "header");
+		    tmodel->addColumn(header, 0, "..."); // add this column
+		
+		    field=field->next;
+		}
+	    
+		// create a table editor
+		tableEditor *ed=new tableEditor(tmodel, dbWin);
+		QTable *t=ed->getTable(); // we modify this table
+	    
+		// load data
+		xmlNodePtr data=struc->next, rec=data->children;
+		int dcount=atoi((const char*) xmlGetProp(data, (const xmlChar*) "count")), wRow=t->numRows();
+		for (int j=0; j < dcount; j++) {
+		    // start a new row
+		    t->insertRows(wRow);
+		    wRow+=1; // working row
+		
+		    // enter data for each column
+		    for (int k=0; k < t->numCols(); k++) {
+			ss << "field" << k;
+			QString fdata=(const char*) xmlGetProp(rec, (const xmlChar*) ss.str().c_str());
+			
+			t->setItem(j, k, new QTableItem(t, QTableItem::OnTyping, fdata));
+			ss.str("");
+		    }
+   		    rec=rec->next;
+		}
+	    
+		// the table should now be loaded, add it to the queue list
+		tableQueue.push_back(std::pair<tableModel*, tableEditor*> (tmodel, ed));
+	    
+		tbl=tbl->next;
+	    }
+	}
+	
+	// show the database window
+	dbWin->show();
+	
+	// now add all those queued tables into the listview
+	for (int i=0; i<tableQueue.size(); i++)
+	    dbWin->addTableObj(tableQueue[i].first, tableQueue[i].second);
+	
+	xmlFreeDoc(doc);
+    }	    	
+    
     return;
 };
 
@@ -157,6 +257,7 @@ void mainWindow::slotSaveDbXML() {
     for (int i=0; i<tcount; i++) {
 	// table node
 	tbl=xmlNewChild(ptr, NULL, (const xmlChar*) "table", NULL);
+	xmlSetProp(tbl, (const xmlChar*) "name", (const xmlChar*) dbWin->tableName(i).ascii());
 	
 	// first save the table structure
 	// table structure contains the column header labels. when loaded, the headers will form the framework
@@ -186,6 +287,13 @@ void mainWindow::slotSaveDbXML() {
 	// that's it for structure, now we save the actual table data
 	QTableItem *t_item;
 	xmlNodePtr p, data=xmlNewChild(tbl, NULL, (const xmlChar*) "data", NULL);
+	
+	// count of all data
+	int dcount=t->numRows();
+	ss << dcount;
+	xmlSetProp(data, (const xmlChar*) "count", (const xmlChar*) ss.str().c_str());
+	ss.str("");
+	
 	for (int j=0; j < t->numRows(); j++) {
 	    p=xmlNewChild(data, NULL, (const xmlChar*) "record", NULL); // record node
 	    

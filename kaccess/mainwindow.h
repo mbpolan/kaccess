@@ -40,7 +40,7 @@ class mainWindow: public QMainWindow {
 	
     public slots:
 	void slotNewDb();
-	void slotOpenDb();
+	void slotOpenDbXML();
 	void slotSaveDbXML();
 	void slotSaveDbAs();
 	void aboutKAccess();
