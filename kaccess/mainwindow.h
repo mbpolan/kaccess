@@ -22,10 +22,18 @@
 #define mainwindow_h
 
 #include <qmainwindow.h>
+#include <qpixmap.h>
+#include <vector>
 
 class QWorkspace;
 class QAction;
 class QPopupMenu;
+
+// graphics defines
+#define GFX_NEW_GENERIC24	0
+#define GFX_OPEN_GENERIC24	1
+#define GFX_SAVE_GENERIC24	2
+#define GFX_SAVE_AS_GENERIC24	3
 
 // the main application window
 class mainWindow: public QMainWindow {
@@ -33,10 +41,6 @@ class mainWindow: public QMainWindow {
     
     public:
 	mainWindow(QWidget *parent=0, const char *name=0);
-	
-	void makeActions();
-	void makeMenus();
-	void makeToolbars();
 	
     public slots:
 	void slotNewDb();
@@ -46,6 +50,12 @@ class mainWindow: public QMainWindow {
 	void aboutKAccess();
        
    private:
+                // private functions
+	void makePixmaps();
+	void makeActions();
+	void makeMenus();
+	void makeToolbars();
+	
 	QWorkspace *workspace;
 	
 	// actions
@@ -63,6 +73,9 @@ class mainWindow: public QMainWindow {
 	QPopupMenu *editMenu;
 	QPopupMenu *helpMenu;
 	QPopupMenu *OpsMenu;
+	
+	// graphics vector
+	std::vector<QPixmap> gfx;
 };
 
 #endif

@@ -30,15 +30,15 @@
 // main
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    QPixmap splash=QPixmap((const char**) splash_xpm);
-    QSplashScreen *splashScreen=new QSplashScreen(splash);
-    splashScreen->show();
+   // QPixmap splash=QPixmap((const char**) splash_xpm);
+    //QSplashScreen *splashScreen=new QSplashScreen(splash);
+    //splashScreen->show();
     
     mainWindow mw;
     
     app.setMainWidget(&mw);
     mw.show();
-    splashScreen->finish(&mw);
+    //splashScreen->finish(&mw);
     
     return app.exec();
 };

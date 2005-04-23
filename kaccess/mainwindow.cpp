@@ -37,9 +37,16 @@
 #include "mainwindow.h"
 #include "tablemodel.h"
 
+// graphics
+#include "icons/new_generic24.xpm"
+#include "icons/open_generic24.xpm"
+#include "icons/save_generic24.xpm"
+#include "icons/save_as_generic24.xpm"
+
 // our main window constructor
 mainWindow::mainWindow(QWidget *parent, const char *name): QMainWindow(parent, name) {
     setCaption("KAccess CVS");
+    makePixmaps();
     makeActions();
     makeMenus();
     makeToolbars();
@@ -48,21 +55,39 @@ mainWindow::mainWindow(QWidget *parent, const char *name): QMainWindow(parent, n
     this->setCentralWidget(workspace);
 };
 
+// generate pixmaps
+void mainWindow::makePixmaps() {
+    QPixmap new_generic=QPixmap((const char**) new_generic_xpm24);
+    QPixmap open_generic=QPixmap((const char**) open_generic_xpm24);
+    QPixmap save_generic=QPixmap((const char**) save_generic_xpm24);
+    QPixmap save_as_generic=QPixmap((const char**) save_as_generic_xpm24);
+    
+    // add to vector
+    gfx.push_back(new_generic);
+    gfx.push_back(open_generic);
+    gfx.push_back(save_generic);
+    gfx.push_back(save_as_generic);
+};
+
 // create the actions used through the program
 void mainWindow::makeActions() {
     newDbAct=new QAction(tr("New database"), tr("Ctrl+N"), this);
+    newDbAct->setIconSet(gfx[GFX_NEW_GENERIC24]);
     newDbAct->setStatusTip("Create a new database");
     connect(newDbAct, SIGNAL(activated()), this, SLOT(slotNewDb()));
     
     openDbAct=new QAction(tr("Open database"), tr("Ctrl+O"), this);
+    openDbAct->setIconSet(gfx[GFX_OPEN_GENERIC24]);
     openDbAct->setStatusTip("Open a database");
     connect(openDbAct, SIGNAL(activated()), this, SLOT(slotOpenDbXML()));
     
     saveDbAct=new QAction(tr("Save database"), tr("Ctrl+S"), this);
+    saveDbAct->setIconSet(gfx[GFX_SAVE_GENERIC24]);
     saveDbAct->setStatusTip("Save this database");
     connect(saveDbAct, SIGNAL(activated()), this, SLOT(slotSaveDbXML()));
     
     saveDbAsAct=new QAction(tr("Save As"), tr("Alt+S"), this);
+    saveDbAsAct->setIconSet(gfx[GFX_SAVE_AS_GENERIC24]);
     saveDbAct->setStatusTip("Save this database as another file");
     connect(saveDbAsAct, SIGNAL(activated()), this, SLOT(slotSaveDbAs()));
     
