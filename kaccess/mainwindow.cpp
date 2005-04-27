@@ -35,7 +35,7 @@
 #include "dbwindow.h"
 #include "dialogs.h"
 #include "mainwindow.h"
-#include "tablemodel.h"
+#include "tabledesigner/tablemodel.h"
 
 // graphics
 #include "icons/new_generic24.xpm"

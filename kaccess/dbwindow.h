@@ -26,7 +26,7 @@
 #include <vector>
 #include <list>
 
-#include "tableeditor.h"
+#include "tabledesigner/tableeditor.h"
 
 class tableDesigner;
 class tableModel;

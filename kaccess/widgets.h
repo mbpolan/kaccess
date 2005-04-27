@@ -27,6 +27,8 @@
 #include <qlistview.h>
 #include <vector>
 
+#include "tabledesigner/fieldeditor.h"
+
 class QGridLayout;
 class QPushButton;
 class QGroupBox;
@@ -91,7 +93,6 @@ class descriptionFrame: public QWidget {
 	QLabel *msgLabel;
 };
 
-class fieldEditor;
 // widget used to edit a field in a table
 class fieldDataEditor: public QTabWidget {
     public:
@@ -103,70 +104,6 @@ class fieldDataEditor: public QTabWidget {
     private:
 	std::vector<fieldEditor*> editors;
 	
-};
-
-// an abstract field editor class
-class fieldEditor: public QWidget {
-    public:
-	fieldEditor(QWidget *parent=0, const char *name=0);
-	
-    private:
-	// generic widgets
-	QLineEdit *fieldSize;
-	QLineEdit *fieldFormatting;
-	QLineEdit *fieldInputMask;
-	QLineEdit *fieldCaption;
-	QLineEdit *fieldDefaultValue;
-	QLineEdit *fieldValidationText;
-	
-	// comboboxes
-	QComboBox *fieldAllowZero;
-	QComboBox *fieldRequired;
-	QComboBox *fieldIndexed;
-	QComboBox *fieldunicodeCompression;
-	
-	// number specific widgets
-	QComboBox *fieldDecimalPlaces;
-	QComboBox *fieldNumberSize;
-	
-	// currenct specific
-	QComboBox *fieldCurrencyFormat;
-};
-
-// text field editor
-class textFieldEditor: public fieldEditor {
-    public:
-	textFieldEditor(QWidget *parent=0, const char *name=0);
-};
-
-// number field editor
-class numberFieldEditor: public fieldEditor {
-    public:
-	numberFieldEditor(QWidget *parent=0, const char *name=0);
-};
-
-// currency field editor
-class currencyFieldEditor: public fieldEditor {
-    public:
-	currencyFieldEditor(QWidget *parent=0, const char *name=0);
-};
-
-// yes/no field editor
-class ynFieldEditor: public fieldEditor {
-    public:
-	ynFieldEditor(QWidget *parent=0, const char *name=0);
-};
-
-// memo field editor
-class memoFieldEditor: public fieldEditor {
-    public:
-	memoFieldEditor(QWidget *parent=0, const char *name=0);
-};
-
-// date/time field editor
-class dateTimeFieldEditor: public fieldEditor {
-    public:
-	dateTimeFieldEditor(QWidget *parent=0, const char *name=0);
 };
 
 #endif

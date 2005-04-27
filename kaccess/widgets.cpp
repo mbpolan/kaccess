@@ -26,6 +26,14 @@
 #include <qgroupbox.h>
 #include <qlabel.h>
 
+// fieldDataEditor nessesary includes
+#include "tabledesigner/currencyfieldeditor.h"
+#include "tabledesigner/dtfieldeditor.h"
+#include "tabledesigner/memofieldeditor.h"
+#include "tabledesigner/numberfieldeditor.h"
+#include "tabledesigner/textfieldeditor.h"
+#include "tabledesigner/ynfieldeditor.h"
+
 #include "widgets.h"
 
 /*********************************************************************
@@ -103,10 +111,6 @@ void descriptionFrame::condense() {
     msgLabel->setText(data);
 };
 
-/*********************************************************************
-  * fieldDataEditor widget *
-  ********************************************************************/
-
 fieldDataEditor::fieldDataEditor(QWidget *parent, const char *name): QTabWidget(parent, name) {
     addTab(new QWidget(this), "General"); // general page
     addTab(new QWidget(this), "Lookup"); // lookup page
@@ -136,53 +140,3 @@ void fieldDataEditor::setEditor(int editor_id) {
 	    editors[i]->hide();
     }
 };
-
-/*********************************************************************
-  * abstract fieldEditor widget *
-  ********************************************************************/
-
-fieldEditor::fieldEditor(QWidget *parent, const char *name): QWidget(parent, name) {
-};
-
-/*********************************************************************
-  * textFieldEditor widget *
-  ********************************************************************/
-
-textFieldEditor::textFieldEditor(QWidget *parent, const char *name): fieldEditor(parent, name) {
-};
-
-/*********************************************************************
-  * numberFieldEditor widget *
-  ********************************************************************/
-
-numberFieldEditor::numberFieldEditor(QWidget *parent, const char *name): fieldEditor(parent, name) {
-};
-
-/*********************************************************************
-  * currencyFieldEditor widget *
-  ********************************************************************/
-
-currencyFieldEditor::currencyFieldEditor(QWidget *parent, const char *name): fieldEditor(parent, name) {
-};
-
-/*********************************************************************
-  * ynFieldEditor widget *
-  ********************************************************************/
-
-ynFieldEditor::ynFieldEditor(QWidget *parent, const char *name): fieldEditor(parent, name) {
-};
-
-/*********************************************************************
-  * memoFieldEditor widget *
-  ********************************************************************/
-
-memoFieldEditor::memoFieldEditor(QWidget *parent, const char *name): fieldEditor(parent, name) {
-};
-
-/*********************************************************************
-  * dateTimeFieldEditor widget *
-  ********************************************************************/
-
-dateTimeFieldEditor::dateTimeFieldEditor(QWidget *parent, const char *name): fieldEditor(parent, name) {
-};
-

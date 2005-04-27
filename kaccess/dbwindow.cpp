@@ -35,9 +35,9 @@
 #include "widgets.h"
 #include "dbwindow.h"
 #include "objlistview.h"
-#include "tabledesigner.h"
-#include "tableeditor.h"
-#include "tablemodel.h"
+#include "tabledesigner/tabledesigner.h"
+#include "tabledesigner/tableeditor.h"
+#include "tabledesigner/tablemodel.h"
 
 // graphics
 #include "icons/design_form.xpm"
