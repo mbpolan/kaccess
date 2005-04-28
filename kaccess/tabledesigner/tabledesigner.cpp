@@ -102,6 +102,7 @@ tableDesignerWidget::tableDesignerWidget(QWidget *parent, const char *name):
     grid=new QGridLayout(this, 3, 2);
     table=new QTable(50, 3, this);
     f_editor=new fieldDataEditor(this);
+    f_editor->setEditor(FIELD_EDITOR_TEXT);
     table->setSelectionMode(QTable::NoSelection);
     
     // set a data type field

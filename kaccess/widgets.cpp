@@ -111,10 +111,12 @@ void descriptionFrame::condense() {
     msgLabel->setText(data);
 };
 
+/*********************************************************************
+  * fieldDateEditor widget *
+  ********************************************************************/
+
+// main constructor
 fieldDataEditor::fieldDataEditor(QWidget *parent, const char *name): QTabWidget(parent, name) {
-    addTab(new QWidget(this), "General"); // general page
-    addTab(new QWidget(this), "Lookup"); // lookup page
-    
     // now we create each editor
     editors.push_back(new textFieldEditor(this));
     editors.push_back(new numberFieldEditor(this));
@@ -127,6 +129,11 @@ fieldDataEditor::fieldDataEditor(QWidget *parent, const char *name): QTabWidget(
     for (int i=0; i<editors.size(); i++)
 	editors[i]->hide();
     
+    // add tabs
+    addTab(editors[FIELD_EDITOR_TEXT], "General"); // general page
+    addTab(new QWidget(this), "Lookup"); // lookup page
+    editors[FIELD_EDITOR_TEXT]->show();
+    
     // process any pending events
    qApp->eventLoop()->processEvents(QEventLoop::ExcludeUserInput);
     
@@ -136,7 +143,7 @@ fieldDataEditor::fieldDataEditor(QWidget *parent, const char *name): QTabWidget(
 void fieldDataEditor::setEditor(int editor_id) {
     // hide all of the editors except the one we want to show now
     for (int i=0; i<editors.size(); i++) {
-	if (i!=editor_id)
-	    editors[i]->hide();
+	if (i==editor_id)
+	    editors[i]->show();
     }
 };

@@ -26,15 +26,22 @@
 #include "fieldeditor.h"
 
 class QGridLayout;
+class QScrollView;
 
 // text field editor
+class textFieldEditorWidget;
 class textFieldEditor: public fieldEditor {
     public:
 	textFieldEditor(QWidget *parent=0, const char *name=0);
+	
+    protected:
+	QGridLayout *grid;
+	textFieldEditorWidget *fwidget;
+	QScrollView *scrollView;
 };
 
 // widget used in the text field editor
-class textFieldEditorWidget: public QWidget {
+class textFieldEditorWidget: public fieldEditorWidget {
     public:
 	textFieldEditorWidget(QWidget *parent=0, const char *name=0);
 	

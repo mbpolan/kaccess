@@ -26,4 +26,9 @@
 
 // constructor
 fieldEditor::fieldEditor(QWidget *parent, const char *name): QWidget(parent, name) {
+    fwidget=new fieldEditorWidget(this);
+};
+
+// constructor for the fieldEditorWidget
+fieldEditorWidget::fieldEditorWidget(QWidget *parent, const char *name): QWidget(parent, name) {
 };

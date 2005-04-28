@@ -29,24 +29,35 @@ class QLabel;
 class QLineEdit;
 
 // an abstract field editor class
+class fieldEditorWidget;
 class fieldEditor: public QWidget {
     public:
 	fieldEditor(QWidget *parent=0, const char *name=0);
 	
-    private:
+    protected:
+	fieldEditorWidget *fwidget;
+};
+
+// abstract widget for field editors
+class fieldEditorWidget: public QWidget {
+    public:
+	fieldEditorWidget(QWidget *parent=0, const char *name=0);
+	
+    protected:
 	// generic widgets
 	QLineEdit *fieldSize;
 	QLineEdit *fieldFormatting;
 	QLineEdit *fieldInputMask;
 	QLineEdit *fieldCaption;
 	QLineEdit *fieldDefaultValue;
+	QLineEdit *fieldValidationRule;
 	QLineEdit *fieldValidationText;
 	
 	// comboboxes
 	QComboBox *fieldAllowZero;
 	QComboBox *fieldRequired;
 	QComboBox *fieldIndexed;
-	QComboBox *fieldunicodeCompression;
+	QComboBox *fieldUnicodeCompression;
 	
 	// number specific widgets
 	QComboBox *fieldDecimalPlaces;
@@ -61,6 +72,7 @@ class fieldEditor: public QWidget {
 	QLabel *fieldInputMaskLabel;
 	QLabel *fieldCaptionLabel;
 	QLabel *fieldDefaultValueLabel;
+	QLabel *fieldValidationRuleLabel;
 	QLabel *fieldValidationTextLabel;
 	QLabel *fieldAllowZeroLabel;
 	QLabel *fieldRequiredLabel;
