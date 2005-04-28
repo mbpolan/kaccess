@@ -32,6 +32,7 @@
 
 #include "dialogs.h"
 #include "tabledesigner.h"
+#include "tabledesigner/designertable.h"
 #include "widgets.h"
 
 // graphics
@@ -99,23 +100,13 @@ void tableDesigner::makeToolbars() {
 tableDesignerWidget::tableDesignerWidget(QWidget *parent, const char *name): 
 	QWidget(parent, name) {
     
-    grid=new QGridLayout(this, 3, 2);
-    table=new QTable(50, 3, this);
-    f_editor=new fieldDataEditor(this);
-    f_editor->setEditor(FIELD_EDITOR_TEXT);
-    table->setSelectionMode(QTable::NoSelection);
-    
     // set a data type field
     fillDataTypeBox(data_types);
     
-    // set column labels
-    QHeader *h=table->horizontalHeader();
-    h->setLabel(0, "Field Name");
-    h->setLabel(1, "Data Type");
-    h->setLabel(2, "Field Description");
-    
-    for (int i=0; i < table->numRows(); i++)
-	table->setItem(i, 1, new QComboTableItem(table, data_types, false));
+    grid=new QGridLayout(this, 3, 2);
+    table=new designerTable(data_types, this);
+    f_editor=new fieldDataEditor(this);
+    f_editor->setEditor(FIELD_EDITOR_TEXT);
     
     grid->addMultiCellWidget(table, 0, 0, 0, 1/*, Qt::AlignCenter*/);
     

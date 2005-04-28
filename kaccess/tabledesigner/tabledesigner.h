@@ -32,9 +32,9 @@ class QLineEdit;
 class QGridLayout;
 class QPushButton;
 class QStringList;
-class QTable;
 class QToolBar;
 class descriptionFrame;
+class designerTable;
 class fieldDataEditor;
 
 // graphic defines
@@ -51,7 +51,7 @@ class tableDesigner: public QMainWindow {
 	tableDesigner(QWidget *parent=0, const char *name=0);
 	
 	// various methods
-	QTable* getTable() const {return table;}
+	designerTable* getTable() const {return table;}
 	
     public slots:
 	void hideAndClear();
@@ -62,7 +62,7 @@ class tableDesigner: public QMainWindow {
     private:
 	QToolBar *mainToolbar;
 	
-	QTable *table;
+	designerTable *table;
 	tableDesignerWidget *designer;
 	
 	// actions
@@ -87,7 +87,7 @@ class tableDesignerWidget: public QWidget {
 	// methods
 	void fillDataTypeBox(QStringList&);
 	
-	QTable *table; // the main table
+	designerTable *table; // the main table
 	
 	// other methods
 	bool isPrimaryKeyActivated() const {return hasPrimaryKey;}

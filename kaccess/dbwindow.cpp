@@ -35,6 +35,7 @@
 #include "widgets.h"
 #include "dbwindow.h"
 #include "objlistview.h"
+#include "tabledesigner/designertable.h"
 #include "tabledesigner/tabledesigner.h"
 #include "tabledesigner/tableeditor.h"
 #include "tabledesigner/tablemodel.h"
@@ -373,7 +374,7 @@ void dbWindow::viewReports() {
 
 // save the table stored in the designer
 void dbWindow::saveTable(QString tableName) {
-    QTable *t=newTableDesigner->getTable();
+    designerTable *t=newTableDesigner->getTable();
     tableModel *tm=new tableModel;
     std::vector<int> activeRows;
     
