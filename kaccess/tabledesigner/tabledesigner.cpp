@@ -137,6 +137,9 @@ tableDesignerWidget::tableDesignerWidget(QWidget *parent, const char *name):
     
     // for updating the data table's description based on cell
     connect(table, SIGNAL(clicked(int, int, int, const QPoint&)), this, SLOT(updateCellDescription(int, int)));
+    
+    // for changing the field editor, if nessesary
+    connect(table, SIGNAL(currentChanged(int, int)), SLOT(parseTableChange(int, int)));
 };
 
 // fill a table combo box with data types
@@ -268,5 +271,37 @@ void tableDesignerWidget::insertNewRows() {
 	    start+=1;
 	}
 	    
+    }
+};
+
+// slot to change the field editor
+void tableDesignerWidget::parseTableChange(int row, int col) {
+    QTableItem *item;
+    
+    // get the table item from column 2 so we can decide what editor should be displayed
+    switch(col) {
+                case 0: item=table->item(row, col+1); break;
+	case 1: item=table->item(row, col); break;
+	case 2: item=table->item(row, col-1); break;
+    }
+    
+    // hopefully we got our item
+    if (item) {
+	QComboTableItem *citem=dynamic_cast<QComboTableItem*> (item);
+	
+	// check if this item can be casted to a combo table item
+	if (citem) {
+	    int id=citem->currentItem(); // current field type
+	    
+	    // and switch the editor accordingly
+	    switch(id) {
+	                case FIELD_EDITOR_TEXT: f_editor->setEditor(FIELD_EDITOR_TEXT); break;
+		case FIELD_EDITOR_NUMBER: f_editor->setEditor(FIELD_EDITOR_NUMBER); break;
+		case FIELD_EDITOR_CURRENCY: f_editor->setEditor(FIELD_EDITOR_CURRENCY); break;
+		case FIELD_EDITOR_YN: f_editor->setEditor(FIELD_EDITOR_YN); break;
+		case FIELD_EDITOR_MEMO: f_editor->setEditor(FIELD_EDITOR_MEMO); break;
+		case FIELD_EDITOR_DATE_TIME: f_editor->setEditor(FIELD_EDITOR_DATE_TIME); break;
+	    }
+	}
     }
 };

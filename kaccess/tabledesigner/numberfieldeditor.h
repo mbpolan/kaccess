@@ -23,10 +23,26 @@
 
 #include "fieldeditor.h"
 
+class QGridLayout;
+
 // number field editor
+class numberFieldEditorWidget;
 class numberFieldEditor: public fieldEditor {
     public:
 	numberFieldEditor(QWidget *parent=0, const char *name=0);
+	
+    private:
+	QGridLayout *grid;
+	numberFieldEditorWidget *fwidget;
 };
 
+// widget used in the numberFieldEditor
+class numberFieldEditorWidget: public fieldEditorWidget {
+    public:
+	numberFieldEditorWidget(QWidget *parent=0, const char *name=0);
+	
+    private:
+	QGridLayout *grid;
+};
+    
 #endif

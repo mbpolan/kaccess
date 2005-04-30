@@ -26,7 +26,6 @@
 #include "fieldeditor.h"
 
 class QGridLayout;
-class QScrollView;
 
 // text field editor
 class textFieldEditorWidget;
@@ -37,7 +36,6 @@ class textFieldEditor: public fieldEditor {
     protected:
 	QGridLayout *grid;
 	textFieldEditorWidget *fwidget;
-	QScrollView *scrollView;
 };
 
 // widget used in the text field editor

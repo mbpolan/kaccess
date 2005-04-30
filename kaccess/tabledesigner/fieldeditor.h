@@ -47,6 +47,7 @@ class fieldEditorWidget: public QWidget {
 	// generic widgets
 	QLineEdit *fieldSize;
 	QLineEdit *fieldFormatting;
+	QLineEdit *fieldDecPlaces;
 	QLineEdit *fieldInputMask;
 	QLineEdit *fieldCaption;
 	QLineEdit *fieldDefaultValue;

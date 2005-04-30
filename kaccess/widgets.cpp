@@ -25,6 +25,7 @@
 #include <qlineedit.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
+#include <qscrollview.h>
 
 // fieldDataEditor nessesary includes
 #include "tabledesigner/currencyfieldeditor.h"
@@ -117,22 +118,30 @@ void descriptionFrame::condense() {
 
 // main constructor
 fieldDataEditor::fieldDataEditor(QWidget *parent, const char *name): QTabWidget(parent, name) {
+    // the main scroll view window
+    scrollView=new QScrollView(this);
+    scrollView->setResizePolicy(QScrollView::AutoOneFit);
+    
     // now we create each editor
-    editors.push_back(new textFieldEditor(this));
-    editors.push_back(new numberFieldEditor(this));
-    editors.push_back(new currencyFieldEditor(this));
-    editors.push_back(new ynFieldEditor(this));
-    editors.push_back(new memoFieldEditor(this));
-    editors.push_back(new dateTimeFieldEditor(this));
+    editors.push_back(new textFieldEditor(scrollView->viewport()));
+    editors.push_back(new numberFieldEditor(scrollView->viewport()));
+    editors.push_back(new currencyFieldEditor(scrollView->viewport()));
+    editors.push_back(new ynFieldEditor(scrollView->viewport()));
+    editors.push_back(new memoFieldEditor(scrollView->viewport()));
+    editors.push_back(new dateTimeFieldEditor(scrollView->viewport()));
     
     // hide all of the editors by default
     for (int i=0; i<editors.size(); i++)
 	editors[i]->hide();
     
-    // add tabs
-    addTab(editors[FIELD_EDITOR_TEXT], "General"); // general page
-    addTab(new QWidget(this), "Lookup"); // lookup page
+    // set the default editor to a text editor
+    scrollView->addChild(editors[FIELD_EDITOR_TEXT]);
     editors[FIELD_EDITOR_TEXT]->show();
+    last_editor=FIELD_EDITOR_TEXT;
+    
+    // add tabs
+    addTab(scrollView, "General"); // general page
+    addTab(new QWidget(this), "Lookup"); // lookup page
     
     // process any pending events
    qApp->eventLoop()->processEvents(QEventLoop::ExcludeUserInput);
@@ -141,9 +150,19 @@ fieldDataEditor::fieldDataEditor(QWidget *parent, const char *name): QTabWidget(
 
 // method to set the editor to show
 void fieldDataEditor::setEditor(int editor_id) {
-    // hide all of the editors except the one we want to show now
-    for (int i=0; i<editors.size(); i++) {
-	if (i==editor_id)
-	    editors[i]->show();
+    fieldEditor *fe=dynamic_cast<fieldEditor*> (editors[last_editor]);
+    if (fe) {
+	// hide all editors again
+	for (int i=0; i<editors.size(); i++)
+	    editors[i]->hide();
+	
+	scrollView->removeChild(fe);
+	scrollView->addChild(editors[editor_id] ? editors[editor_id] : NULL);
+	
+	// show the editor if found and update the last editor id
+	if (editors[editor_id]) {
+	    editors[editor_id]->show();
+	    last_editor=editor_id;
+	}
     }
 };

@@ -22,7 +22,6 @@
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <qscrollview.h>
 #include <vector>
 
 #include "fieldeditor.h"
@@ -31,12 +30,8 @@
 // constructor
 textFieldEditor::textFieldEditor(QWidget *parent, const char *name): fieldEditor(parent, name) {
     grid=new QGridLayout(this, 1, 1);
-    scrollView=new QScrollView(this);
-    fwidget=new textFieldEditorWidget(scrollView->viewport());
-    scrollView->addChild(fwidget);
-    scrollView->setResizePolicy(QScrollView::AutoOneFit);
-    
-    grid->addWidget(scrollView, 0, 0);
+    fwidget=new textFieldEditorWidget(this);
+    grid->addWidget(fwidget, 0, 0);
 };
 
 // constructor for textFieldEditorWidget

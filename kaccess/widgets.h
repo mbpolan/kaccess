@@ -35,6 +35,7 @@ class QGroupBox;
 class QLabel;
 class QLineEdit;
 class QComboBox;
+class QScrollView;
 
 // fieldEditor defines
 #define FIELD_EDITOR_TEXT	0
@@ -102,6 +103,9 @@ class fieldDataEditor: public QTabWidget {
 	void setEditor(int);
 	
     private:
+	int last_editor; // last editor to be displayed
+	
+	QScrollView *scrollView;
 	std::vector<fieldEditor*> editors;
 	
 };

@@ -99,6 +99,8 @@ class tableDesignerWidget: public QWidget {
 	void setPrimaryKey();
 	void insertNewRows();
 	
+	void parseTableChange(int, int);
+	
     signals:
 	void saveButtonClicked(QString);
 	void cancelButtonClicked();
