@@ -53,8 +53,7 @@ tableDesigner::tableDesigner(QWidget *parent, const char *name): QMainWindow(par
     makeToolbars();
     
     // signal connection
-    connect(designer, SIGNAL(saveButtonClicked(QString)), SIGNAL(tdSaveButtonClicked(QString)));
-    connect(designer, SIGNAL(saveButtonClicked(QString)), SLOT(hideAndClear()));
+    connect(designer, SIGNAL(saveButtonClicked(QString)), SLOT(parseSaveTable(QString)));
     connect(designer, SIGNAL(cancelButtonClicked()), SLOT(hideAndClear()));
 };
 
@@ -91,6 +90,28 @@ void tableDesigner::makeToolbars() {
     insertRowAct->addTo(mainToolbar);
     
     moveDockWindow(mainToolbar, Qt::DockTop);
+};
+
+// slot to make sure the table is ready to be saved
+void tableDesigner::parseSaveTable(QString name) {
+    // check to see if this table is empty
+    if (!designer->table->item(0, 0)) {
+	QMessageBox::critical(this, "Error", "A table must have at least one complete field.");
+	return;
+    }
+    
+    // check the primary key
+    else if (!designer->isPrimaryKeyActivated()) {
+	QMessageBox::critical(this, "Error", "You have not set a primary key. Please set "
+			      "one before saving this table.");
+	return;
+    }
+    
+    // everything seems ok
+    else {
+	emit tdSaveButtonClicked(name);
+	hideAndClear();
+    }
 };
 
 /**********************************************************
@@ -154,12 +175,28 @@ void tableDesignerWidget::fillDataTypeBox(QStringList &box) {
 
 // method to clear the table
 void tableDesignerWidget::clear() {
+    std::stringstream ss;
+    
+    // clear all cells
     for (int i=0; i<table->numRows(); i++) {
 	for (int j=0; j<table->numCols(); j++) {
 	    if (j!=1)
 		table->clearCell(i, j);
 	}
     }
+    
+    // reset the variables
+    hasPrimaryKey=false;
+    primaryKey=(-1);
+    
+    // restore the original table headers
+    QHeader *h=table->verticalHeader();
+    for (int i=0; i < table->numRows(); i++) {
+	ss << i+1;
+	h->setLabel(i, ss.str().c_str());
+	ss.str("");
+    }
+    
 };
 
 // slot to update a field description. (we skip the button and QPoint parameters)

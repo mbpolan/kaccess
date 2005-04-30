@@ -55,6 +55,7 @@ class tableDesigner: public QMainWindow {
 	
     public slots:
 	void hideAndClear();
+	void parseSaveTable(QString);
 	
     signals:
 	void tdSaveButtonClicked(QString);
