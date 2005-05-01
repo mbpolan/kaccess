@@ -151,7 +151,7 @@ fieldDataEditor::fieldDataEditor(QWidget *parent, const char *name): QTabWidget(
 // method to set the editor to show
 void fieldDataEditor::setEditor(int editor_id) {
     fieldEditor *fe=dynamic_cast<fieldEditor*> (editors[last_editor]);
-    if (fe) {
+    if (fe && last_editor!=editor_id) {
 	// hide all editors again
 	for (int i=0; i<editors.size(); i++)
 	    editors[i]->hide();
