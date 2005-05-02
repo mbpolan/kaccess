@@ -20,7 +20,8 @@ HEADERS	+= dbwindow.h \
 	tabledesigner/tablemodel.h \
 	tabledesigner/textfieldeditor.h \
 	tabledesigner/ynfieldeditor.h \
-	tabledesigner/designertable.h
+	tabledesigner/designertable.h \
+	triplet.h
 
 SOURCES	+= dbwindow.cpp \
 	main.cpp \

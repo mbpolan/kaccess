@@ -16,30 +16,39 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-// designertable.cpp: designerTable's implementations
+// triplet.h: template class that stores 3 different data
 
-#include "designertable.h"
-
-// the main constructor of designerTable
-designerTable::designerTable(QStringList data_types, QWidget *parent, const char *name): 
-	QTable(parent, name) {
-    
-    // we set up a basic table first
-    setNumCols(3);
-    setNumRows(50);
-    setSelectionMode(QTable::NoSelection);
-    
-    // set the header labels
-    QHeader *h=horizontalHeader();
-    h->setLabel(0, "Field Name");
-    h->setLabel(1, "Data Type");
-    h->setLabel(2, "Field Description");
-    
-    // change column 2 cells to be QComboBoxes
-    for (int i=0; i < numRows(); i++)
-	this->setItem(i, 1, new QComboTableItem(this, data_types, false));
+// template class that stores 3 classes of data
+template <class T, class T2, class T3>
+class triplet {
+    public:
+	triplet(T data1, T2 data2, T3 data3);
+	
+	// member functions
+	void clear();
+	
+	// data
+	T first;
+	T2 second;
+	T3 third;
 };
 
-// return the headers of a row in the form of a triplet
-/*triplet<QString, fieldData*, QString> designerTable::getRowData(int row) {
-};*/
+/***************************************************************************
+  * Start template class triplet implementations
+  ***************************************************************************/
+
+// main constructor
+template <class T, class T2, class T3>
+triplet<T, T2, T3>::triplet(T data1, T2 data2, T3 data3) {
+    first=data1;
+    second=data2;
+    third=data3;
+};
+
+// member function clear: reset the triplet
+template <class T, class T2, class T3>
+void triplet<T, T2, T3>::clear() {
+    first=NULL;
+    second=NULL;
+    third=NULL;
+};
