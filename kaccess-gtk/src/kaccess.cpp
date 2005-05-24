@@ -37,5 +37,8 @@ int main(int argc, char *argv[]) {
 	// run the app
 	app.run(*mw);
 	
+	// delete the window
+	delete mw;
+	
 	return 0;
 };

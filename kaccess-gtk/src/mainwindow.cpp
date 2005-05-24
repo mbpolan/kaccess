@@ -81,7 +81,7 @@ MainWindow::MainWindow(std::string path): Gtk::Window() {
 	}
 	
 	// pack the menu bars
-	topVB=new Gtk::VBox;
+	topVB=manage(new Gtk::VBox);
 	Gtk::Widget *menuBar=uiManager->get_widget("/MainMenuBar");
 	if (menuBar)
 		topVB->pack_start(*menuBar, Gtk::PACK_SHRINK);
@@ -93,28 +93,30 @@ MainWindow::MainWindow(std::string path): Gtk::Window() {
 	}
 		
 	// create the main table
-	table=new Gtk::Table(3, 1, false);
+	table=manage(new Gtk::Table(3, 1, false));
 		
 	// add the vbox to the table
 	table->attach(*topVB, 0, 1, 0, 1);
 	
 	// overview label
-	mLabel=new Gtk::Label("Welcome to KAccess. All of your databases will be listed below. \nRight click any of the"
-			      "databases for a menu of options.");
+	mLabel=manage(new Gtk::Label("Welcome to KAccess. All of your databases will be listed below. \nRight click any of the"
+			      "databases for a menu of options."));
 			      
 	// add labels to table
 	table->attach(*mLabel, 0, 1, 1, 2);
 			      
 	// now we make the treeview and its componenets
 	tstore=Gtk::TreeStore::create(colRecord);
-	tview=new Gtk::TreeView(tstore);
+	tview=manage(new Gtk::TreeView(tstore));
 	tview->set_size_request(364, 100);
 	
 	// set up columns
 	tview->append_column("Database Name", colRecord.dbName);
 	
 	// add the treeview to the scrolled window
-	sWindow=new Gtk::ScrolledWindow;
+	sWindow=manage(new Gtk::ScrolledWindow);
+	sWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+	
 	sWindow->add(*tview);
 	
 	// attach the window
@@ -124,9 +126,7 @@ MainWindow::MainWindow(std::string path): Gtk::Window() {
 	add(*table);
 	
 	// show the widgets
-	table->show();
-	table->show_all_children();
-	topVB->show_all_children();
+	show_all_children();
 
 };
 
