@@ -18,9 +18,11 @@
  ***************************************************************************/ 
 // mainwindow.cpp: implementations of MainWindow class
 
+#include <gtkmm/filechooserdialog.h>
 #include <gtkmm/menubar.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/toolbar.h>
+#include "dbwindow.h"
 #include "mainwindow.h"
 
 // MainWindow class default constructor
@@ -130,5 +132,40 @@ MainWindow::MainWindow(std::string path): Gtk::Window() {
 
 };
 
+// destructor
 MainWindow::~MainWindow() {
+	// clean the queue
+	for (std::list<Gtk::Widget*>::iterator it=destroyQueue.begin(); it!=destroyQueue.end(); ++it) {
+		if ((*it)) {
+			delete (*it);
+			it=destroyQueue.erase(it);
+		}
+	}
+};
+
+// sig handler to create a new database
+void MainWindow::createNewDB() {
+	Gtk::FileChooserDialog *fcd=new Gtk::FileChooserDialog(*this, "Presave Database", Gtk::FILE_CHOOSER_ACTION_SAVE);
+	fcd->add_button("Save", 0x01);
+	fcd->add_button("Cancel", 0x00);
+	
+	// run the dialog
+	int id=fcd->run();
+	
+	// check the id
+	if (id==1) {
+		Glib::ustring path=fcd->get_filename();
+		
+		// TODO: presave code
+	}
+	
+	// free memory 
+	delete fcd;
+	
+	// open a new database window
+	DBWindow *dbWin=new DBWindow("Database"); // FIXME: database naming
+	destroyQueue.push_back(dbWin);
+	
+	// present this window
+	dbWin->present();
 };

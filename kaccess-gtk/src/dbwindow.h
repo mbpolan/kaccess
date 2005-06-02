@@ -16,81 +16,80 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/ 
-// mainwindow.h: MainWindow class
+// dbwindow.h: DBWindow class 
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef DBWINDOW_H
+#define DBWINDOW_H
 
 #include <iostream>
 #include <gtkmm/actiongroup.h>
-#include <gtkmm/box.h>
-#include <gtkmm/label.h>
+#include <gtkmm/button.h>
+#include <gtkmm/frame.h>
+#include <gtkmm/liststore.h>
 #include <gtkmm/scrolledwindow.h>
-#include <gtkmm/table.h>
-#include <gtkmm/treemodel.h>
-#include <gtkmm/treestore.h>
 #include <gtkmm/treeview.h>
+#include <gtkmm/table.h>
 #include <gtkmm/uimanager.h>
 #include <gtkmm/window.h>
-#include <list>
+#include <vector>
 
-/** The main window used as a base for all new windows.
-  * This is the main window that is the first to be drawn on the screen. If you plan
-  * on making customized windows that should appear after this window is constructed,
-  * then make sure to set a MainWindow as the parent for that window. This will ensure
-  * that any windows opened will be properly disposed of once the application is closed.
+#include "dbtreeview.h"
+
+/** The window that is used for each database for control.
+  * This is the window that control all aspects of database management. Everytime
+  * a new database is made, it is assigned an instance of this window so the user
+  * can control it.
 */
 
-// the main window class
-class MainWindow: public Gtk::Window {
+// the dbwindow class
+class DBWindow: public Gtk::Window {
 	public:
-		/// Default constructor 
-		/** Constructs a default main window.
-		  * \param path Path to a database file to open
+		/// Default constructor
+		/** Constructs a new DBWindow
+		  * \param title The name of this database
 		*/
-		MainWindow(std::string path="NULL");
+		DBWindow(std::string title="Database");
 		
 		/// Destructor
-		virtual ~MainWindow();
+		~DBWindow();
 		
-	protected:
-		// signal handlers
-		void createNewDB();
-		void openDB() {};
-		void saveDB() {};
+		/// Method to set the title of this database
+		/** \param title The name of the database
+		*/
+		void setTitle(std::string title) { this->set_title(title); }
 		
-		// layout managers
-		Gtk::ScrolledWindow *sWindow;
+		/// Method to get the title of this database
+		/** \return The name of this database
+		*/
+		std::string getTitle() const { return this->get_title(); }
+		
+	private:
+		// handlers
+		void openTarget();
+		void designNew() {};
+		
+		// containers
+		Gtk::Frame *frame;
 		Gtk::Table *table;
-		Gtk::VBox *topVB;
+		Gtk::ScrolledWindow *sWindow;
 		
-		// labels
-		Gtk::Label *mLabel;
+		Gtk::VBox *vb; // button box
+		Gtk::HBox *hb; // hbox containing tview and vbuttonbox
 		
-		// tree view stuff
-		Gtk::TreeView *tview;
-		Glib::RefPtr<Gtk::TreeStore> tstore;
+		// buttons
+		Gtk::Button *tablesButton;
+		Gtk::Button *formsButton;
+		Gtk::Button *reportsButton;
 		
-		// columns
-		class ModelColumnRecord: public Gtk::TreeModel::ColumnRecord {
-			public:
-				ModelColumnRecord() {
-					add(dbName);
-				}
-				
-				// columns
-				Gtk::TreeModelColumn<Glib::ustring> dbName;
-		};
-		
-		// our model column record
-		ModelColumnRecord colRecord;
-		
-		// menus and related things
-		Glib::RefPtr<Gtk::UIManager> uiManager;
+		// toolbar
 		Glib::RefPtr<Gtk::ActionGroup> actionGroup;
+		Glib::RefPtr<Gtk::UIManager> uiManager;
 		
-		// destroy list
-		std::list<Gtk::Widget*> destroyQueue;
+		// vector of tree views
+		std::vector<DBTreeView*> views;
+		
+		// other vars
+		int currentView;
 };
 
 #endif

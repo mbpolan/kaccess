@@ -48,13 +48,15 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_kaccess_OBJECTS = kaccess.$(OBJEXT) mainwindow.$(OBJEXT)
+am_kaccess_OBJECTS = dbtreeview.$(OBJEXT) dbwindow.$(OBJEXT) \
+	kaccess.$(OBJEXT) mainwindow.$(OBJEXT)
 kaccess_OBJECTS = $(am_kaccess_OBJECTS)
 kaccess_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/kaccess.Po \
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/dbtreeview.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dbwindow.Po ./$(DEPDIR)/kaccess.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/mainwindow.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -148,7 +150,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AM_CXXFLAGS = `pkg-config gtkmm-2.4 --cflags`
 kaccess_LDFLAGS = `pkg-config gtkmm-2.4 --libs` -lxml2
-kaccess_SOURCES = kaccess.cpp mainwindow.cpp mainwindow.h
+kaccess_SOURCES = dbtreeview.cpp dbtreeview.h dbwindow.cpp dbwindow.h kaccess.cpp mainwindow.cpp mainwindow.h
 CLEANFILES = *~ *.o
 all: all-am
 
@@ -216,6 +218,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbtreeview.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbwindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kaccess.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mainwindow.Po@am__quote@
 
