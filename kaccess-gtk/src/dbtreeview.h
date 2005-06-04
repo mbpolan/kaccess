@@ -52,7 +52,7 @@ class DBTreeView: public Gtk::TreeView {
 				Gtk::TreeModelColumn<Glib::ustring> item;
 		};
 		
-		// column records
+		/// Column records for the view
 		DBColumnRecord colRec;
 		
 	private:

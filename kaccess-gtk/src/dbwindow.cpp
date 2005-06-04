@@ -19,6 +19,7 @@
 // dbwindow.cpp: implementations of DBWindow class
 
 #include <gtkmm/box.h>
+#include <gtkmm/image.h>
 #include <gtkmm/frame.h>
 #include <gtkmm/buttonbox.h>
 #include "dbwindow.h"
@@ -32,41 +33,26 @@ DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
 	table=manage(new Gtk::Table(5, 5, false));
 	table->set_spacings(3);
 	
-	// create the action group and actions
-	actionGroup=Gtk::ActionGroup::create();
+	// create the row of boxes on the top of the window
+	hbb=manage(new Gtk::HButtonBox);
 	
-	actionGroup->add(Gtk::Action::create("ToolbarDesignSelected", "Design", "Design a new item"),
-			 sigc::mem_fun(*this, &DBWindow::designNew));
-			
-	/*actionGroup->add(Gtk::Action::create("ToolbarDeleteSelected", "Delete", "Delete the selected item"),
-			 sigc::mem_fun(*this, &DBWindow::deleteSelected));*/
-			 
-	// make the ui manager
-	uiManager=Gtk::UIManager::create();
-	uiManager->insert_action_group(actionGroup);
+	// buttons with images; start with table images
+	openSelectedButton=manage(new Gtk::Button);
+	openSelectedButton->add(*(manage(new Gtk::Image("icons/open_generic.xpm"))));
+	openSelectedButton->signal_clicked().connect(sigc::mem_fun(*this, &DBWindow::openSelectedItem));
 	
-	// make a ui string
-	try {
-		Glib::ustring buffer=
-		"<ui>"
-		"	<toolbar name='Toolbar'>"
-		"		<toolitem action='ToolbarDesignSelected'/>"
-		"	</toolbar>"
-		"</ui>";
+	designSelectedButton=manage(new Gtk::Button);
+	designSelectedButton->add(*(manage(new Gtk::Image("icons/design_table.xpm"))));
+	designSelectedButton->signal_clicked().connect(sigc::mem_fun(*this, &DBWindow::designSelectedItem));
 	
-		// add the ui string to the ui manager
-		uiManager->add_ui_from_string(buffer);
-	}
+	newSelectedButton=manage(new Gtk::Button);
+	newSelectedButton->add(*(manage(new Gtk::Image("icons/new_table.xpm"))));
+	newSelectedButton->signal_clicked().connect(sigc::mem_fun(*this, &DBWindow::newSelectedItem));
 	
-	catch(const Glib::Error &e) {
-		std::cout << "Unable to create toolbars: " << e.what() << std::endl;
-	}
-	
-	// create the toolbar
-	Gtk::VBox *tvb=manage(new Gtk::VBox);
-	Gtk::Widget *toolbar=uiManager->get_widget("/Toolbar");
-	if (toolbar)
-		tvb->pack_start(*toolbar, Gtk::PACK_SHRINK);
+	// pack the buttons
+	hbb->pack_start(*openSelectedButton);
+	hbb->pack_start(*designSelectedButton);
+	hbb->pack_start(*newSelectedButton);
 	
 	// create some containers
 	vb=manage(new Gtk::VBox);
@@ -107,7 +93,7 @@ DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
 	frame->add(*hb);
 	
 	// finally pack the layout managers into the table
-	table->attach(*tvb, 0, 1, 0, 1);
+	table->attach(*hbb, 0, 1, 0, 1);
 	table->attach(*frame, 0, 1, 1, 2);
 	
 	// finish stuff up

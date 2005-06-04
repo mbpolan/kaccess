@@ -24,6 +24,7 @@
 #include <iostream>
 #include <gtkmm/actiongroup.h>
 #include <gtkmm/button.h>
+#include <gtkmm/buttonbox.h>
 #include <gtkmm/frame.h>
 #include <gtkmm/liststore.h>
 #include <gtkmm/scrolledwindow.h>
@@ -68,6 +69,10 @@ class DBWindow: public Gtk::Window {
 		void openTarget();
 		void designNew() {};
 		
+		void openSelectedItem() { };
+		void designSelectedItem() { };
+		void newSelectedItem() { };
+		
 		// containers
 		Gtk::Frame *frame;
 		Gtk::Table *table;
@@ -75,15 +80,15 @@ class DBWindow: public Gtk::Window {
 		
 		Gtk::VBox *vb; // button box
 		Gtk::HBox *hb; // hbox containing tview and vbuttonbox
+		Gtk::HButtonBox *hbb; // "toolbar" box
 		
 		// buttons
 		Gtk::Button *tablesButton;
 		Gtk::Button *formsButton;
 		Gtk::Button *reportsButton;
-		
-		// toolbar
-		Glib::RefPtr<Gtk::ActionGroup> actionGroup;
-		Glib::RefPtr<Gtk::UIManager> uiManager;
+		Gtk::Button *openSelectedButton;
+		Gtk::Button *designSelectedButton;
+		Gtk::Button *newSelectedButton;
 		
 		// vector of tree views
 		std::vector<DBTreeView*> views;
