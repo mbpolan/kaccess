@@ -34,6 +34,7 @@
 #include <gtkmm/window.h>
 #include <vector>
 
+#include "buttons.h"
 #include "dbtreeview.h"
 
 /** The window that is used for each database for control.
@@ -66,6 +67,8 @@ class DBWindow: public Gtk::Window {
 		
 	private:
 		// handlers
+		void changeView(int view_id);
+		
 		void openTarget();
 		void designNew() {};
 		
@@ -83,9 +86,9 @@ class DBWindow: public Gtk::Window {
 		Gtk::HButtonBox *hbb; // "toolbar" box
 		
 		// buttons
-		Gtk::Button *tablesButton;
-		Gtk::Button *formsButton;
-		Gtk::Button *reportsButton;
+		IDButton *tablesButton;
+		IDButton *formsButton;
+		IDButton *reportsButton;
 		Gtk::Button *openSelectedButton;
 		Gtk::Button *designSelectedButton;
 		Gtk::Button *newSelectedButton;

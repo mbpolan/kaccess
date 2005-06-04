@@ -59,9 +59,14 @@ DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
 	hb=manage(new Gtk::HBox);
 	
 	// create the buttons on the left
-	tablesButton=manage(new Gtk::Button("Tables"));
-	formsButton=manage(new Gtk::Button("Forms"));
-	reportsButton=manage(new Gtk::Button("Reports"));
+	tablesButton=manage(new IDButton("Tables", 0x00));
+	tablesButton->signal_clicked_with_id.connect(sigc::mem_fun(*this, &DBWindow::changeView));
+	
+	formsButton=manage(new IDButton("Forms", 0x01));
+	formsButton->signal_clicked_with_id.connect(sigc::mem_fun(*this, &DBWindow::changeView));
+	
+	reportsButton=manage(new IDButton("Reports", 0x02));
+	reportsButton->signal_clicked_with_id.connect(sigc::mem_fun(*this, &DBWindow::changeView));
 	
 	// pack the buttons into a vbox
 	vb->pack_start(*tablesButton);
@@ -103,6 +108,45 @@ DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
 
 // destructor
 DBWindow::~ DBWindow() {
+};
+
+// function that changes the TreeView displayed
+void DBWindow::changeView(int view_id) {
+	if (currentView==view_id)
+		return;
+	
+	// remove the previous view from the scrolled window
+	sWindow->remove();
+	sWindow->add(*views[view_id]);
+	
+	Gtk::Image *dImage=dynamic_cast<Gtk::Image*> (designSelectedButton->get_child());
+	Gtk::Image *nImage=dynamic_cast<Gtk::Image*> (newSelectedButton->get_child());
+	
+	// change the button images
+	switch(view_id) {
+		case 0x00: {
+			dImage->set("icons/design_table.xpm");
+			nImage->set("icons/new_table.xpm");
+		};
+		break;
+		
+		case 0x01: {
+			dImage->set("icons/design_form.xpm");
+			nImage->set("icons/new_form.xpm");
+		};
+		break;
+		
+		case 0x02: {
+			dImage->set("icons/design_report.xpm");
+			nImage->set("icons/new_report.xpm");
+		};
+		break;
+	}
+	
+	// change the id
+	currentView=view_id;
+	
+	show_all_children();
 };
 
 // function to open a target on the list
