@@ -70,6 +70,7 @@ class DBWindow: public Gtk::Window {
 		void changeView(int view_id);
 		
 		void openTarget();
+		void editItem(Gtk::TreeModel::iterator it);
 		void designNew() {};
 		
 		void openSelectedItem() { };

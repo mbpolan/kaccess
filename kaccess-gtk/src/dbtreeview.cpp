@@ -22,14 +22,50 @@
 
 // constructor
 DBTreeView::DBTreeView(): Gtk::TreeView() {
-	tstore=/*Glib::RefPtr<Gtk::TreeStore>::RefPtr(tst*/Gtk::TreeStore::create(colRec);
+	tstore=Gtk::TreeStore::create(colRec);
 	set_model(tstore);
+	
+	// creat the context menu
+	cMenu=new Gtk::Menu;
+	Gtk::Menu::MenuList &items=cMenu->items();
+		
+	// set up the menu
+	items.push_back(Gtk::Menu_Helpers::MenuElem("_Edit Name", sigc::mem_fun(*this, &DBTreeView::onEditMenuPopup)));
+		
+	cMenu->accelerate(*this);
+};
+
+// destructor
+DBTreeView::~ DBTreeView() {
+	delete cMenu;
 };
 
 // overloaded button event function for checking for double clicks on the list
 bool DBTreeView::on_button_press_event(GdkEventButton *e) {
-	if (e && e->type==GDK_2BUTTON_PRESS) {
+	// call the parent event handler for normal function
+	Gtk::TreeView::on_button_press_event(e);
+	
+	// double click with first mouse button event
+	if (e && e->type==GDK_2BUTTON_PRESS && e->button==1) {
 		// emit the double clicked signal
 		this->itemDoubleClicked();
+	}
+	
+	// single click with right mouse button event
+	else if (e && e->type==GDK_BUTTON_PRESS && e->button==3) {
+		cMenu->popup(e->button, e->time);
+	}
+	
+	return true;
+};
+
+// signal handler for context menu
+void DBTreeView::onEditMenuPopup() {
+	Glib::RefPtr<Gtk::TreeView::Selection> sel=get_selection();
+	if (sel) {
+		Gtk::TreeModel::iterator it=sel->get_selected();
+		
+		if (it && (*it))
+			this->itemRequestEdit(it);
 	}
 };

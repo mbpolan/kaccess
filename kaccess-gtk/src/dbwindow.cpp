@@ -78,12 +78,20 @@ DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
 	for (int i=0; i<3; i++) {
 		views.push_back(manage(new DBTreeView));
 		views[i]->set_size_request(240, 140);
+		
+		// connect signals
+		views[i]->itemDoubleClicked.connect(sigc::mem_fun(*this, &DBWindow::openTarget));
+		views[i]->itemRequestEdit.connect(sigc::mem_fun(*this, &DBWindow::editItem));
 	}
 	
 	// add some columns
 	views[0]->append_column("Tables", views[0]->colRec.item);
 	views[1]->append_column("Forms", views[1]->colRec.item);
 	views[2]->append_column("Reports", views[2]->colRec.item);
+	
+	// make some rows containign options
+	Gtk::TreeModel::Row row=*(views[0]->getTreeModel()->append());
+	row[views[0]->colRec.item]="Create a table in design view";
 	
 	// now make the scrolled window for the tree view
 	sWindow=manage(new Gtk::ScrolledWindow);
@@ -151,4 +159,23 @@ void DBWindow::changeView(int view_id) {
 
 // function to open a target on the list
 void DBWindow::openTarget() {
+	Glib::RefPtr<Gtk::TreeView::Selection> sel=views[currentView]->get_selection();
+	if (sel) {
+		Gtk::TreeModel::iterator it=sel->get_selected();
+		
+		#ifdef DEBUG
+			std::cout << "File: " << __FILE__ << " at line: " << __LINE__ << ": Should open target: "
+				  << (*it)[views[currentView]->colRec.item] << "\n";
+		#endif
+	}
+};
+
+// function to edit an item's name
+void DBWindow::editItem(Gtk::TreeModel::iterator it) {
+	// name of the item
+	Glib::ustring name=(*it)[views[currentView]->colRec.item];
+	
+	#ifdef DEBUG
+		std::cout << "File: " << __FILE__ << " at line: " << __LINE__ << ": Item to edit: " << name << std::endl;
+	#endif
 };

@@ -21,6 +21,7 @@
 #ifndef DBTREEVIEW_H
 #define DBTREEVIEW_H
 
+#include <gtkmm/menu.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/treestore.h>
 
@@ -37,11 +38,17 @@ class DBTreeView: public Gtk::TreeView {
 		/// Default constructor
 		DBTreeView();
 		
+		/// Destructor
+		virtual ~DBTreeView();
+		
 		// signals
 		/// Signal emitted when an item is double clicked
 		sigc::signal<void> itemDoubleClicked;
 		
-		// model columns
+		/// Signal emitted when an item is requested to be edited
+		sigc::signal<void, Gtk::TreeModel::iterator> itemRequestEdit;
+		
+		/// Derived class containing the column record
 		class DBColumnRecord: public Gtk::TreeModel::ColumnRecord {
 			public:
 				DBColumnRecord() {
@@ -55,12 +62,21 @@ class DBTreeView: public Gtk::TreeView {
 		/// Column records for the view
 		DBColumnRecord colRec;
 		
+		/// Get the TreeStore for this view
+		Glib::RefPtr<Gtk::TreeStore> getTreeModel() const { return tstore; }
+		
 	private:
 		// overloaded functions
 		virtual bool on_button_press_event(GdkEventButton*);
 		
+		// signal handlers
+		void onEditMenuPopup();
+		
 		// tree store
 		Glib::RefPtr<Gtk::TreeStore> tstore;
+		
+		// menu
+		Gtk::Menu *cMenu;
 };
 
 #endif
