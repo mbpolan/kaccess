@@ -22,7 +22,9 @@
 #include <gtkmm/image.h>
 #include <gtkmm/frame.h>
 #include <gtkmm/buttonbox.h>
+
 #include "dbwindow.h"
+#include "tabledesigner/tabledesigner.h"
 
 // constructor for DBWindow
 DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
@@ -116,6 +118,13 @@ DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
 
 // destructor
 DBWindow::~ DBWindow() {
+	// clean the queue
+	for(std::list<Gtk::Widget*>::iterator it=destroyQueue.begin(); it!=destroyQueue.end(); ++it) {
+		if ((*it)) {
+			delete (*it);
+			it=destroyQueue.erase(it);
+		}
+	}
 };
 
 // function that changes the TreeView displayed
@@ -167,6 +176,7 @@ void DBWindow::openTarget() {
 			std::cout << "File: " << __FILE__ << " at line: " << __LINE__ << ": Should open target: "
 				  << (*it)[views[currentView]->colRec.item] << "\n";
 		#endif
+		
 	}
 };
 
@@ -178,4 +188,22 @@ void DBWindow::editItem(Gtk::TreeModel::iterator it) {
 	#ifdef DEBUG
 		std::cout << "File: " << __FILE__ << " at line: " << __LINE__ << ": Item to edit: " << name << std::endl;
 	#endif
+};
+
+// function to design a new instance of the current item
+void DBWindow::designSelectedItem() {
+	// check which view we are in now
+	switch(currentView) {
+		case 0x00: {
+			TableDesigner *tb=new TableDesigner;
+			tb->present();
+			
+			destroyQueue.push_back(tb);
+		};
+		break;
+		
+		case 0x01: break;
+		
+		case 0x02: break;
+	}
 };

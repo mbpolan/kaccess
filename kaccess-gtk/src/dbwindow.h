@@ -32,6 +32,7 @@
 #include <gtkmm/table.h>
 #include <gtkmm/uimanager.h>
 #include <gtkmm/window.h>
+#include <list>
 #include <vector>
 
 #include "buttons.h"
@@ -71,10 +72,9 @@ class DBWindow: public Gtk::Window {
 		
 		void openTarget();
 		void editItem(Gtk::TreeModel::iterator it);
-		void designNew() {};
 		
 		void openSelectedItem() { };
-		void designSelectedItem() { };
+		void designSelectedItem();
 		void newSelectedItem() { };
 		
 		// containers
@@ -99,6 +99,9 @@ class DBWindow: public Gtk::Window {
 		
 		// other vars
 		int currentView;
+		
+		// destroy queue
+		std::list<Gtk::Widget*> destroyQueue;
 };
 
 #endif
