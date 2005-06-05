@@ -26,6 +26,15 @@
 #include "dbwindow.h"
 #include "tabledesigner/tabledesigner.h"
 
+// icons
+#include "icons/design_table.xpm"
+#include "icons/design_form.xpm"
+#include "icons/design_report.xpm"
+#include "icons/new_table.xpm"
+#include "icons/new_form.xpm"
+#include "icons/new_report.xpm"
+#include "icons/open_generic.xpm"
+
 // constructor for DBWindow
 DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
 	set_title(title);
@@ -40,15 +49,15 @@ DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
 	
 	// buttons with images; start with table images
 	openSelectedButton=manage(new Gtk::Button);
-	openSelectedButton->add(*(manage(new Gtk::Image("icons/open_generic.xpm"))));
+	openSelectedButton->add(*(manage(new Gtk::Image(Gdk::Pixbuf::create_from_xpm_data(open_generic_xpm)))));
 	openSelectedButton->signal_clicked().connect(sigc::mem_fun(*this, &DBWindow::openSelectedItem));
 	
 	designSelectedButton=manage(new Gtk::Button);
-	designSelectedButton->add(*(manage(new Gtk::Image("icons/design_table.xpm"))));
+	designSelectedButton->add(*(manage(new Gtk::Image(Gdk::Pixbuf::create_from_xpm_data(design_table_xpm)))));
 	designSelectedButton->signal_clicked().connect(sigc::mem_fun(*this, &DBWindow::designSelectedItem));
 	
 	newSelectedButton=manage(new Gtk::Button);
-	newSelectedButton->add(*(manage(new Gtk::Image("icons/new_table.xpm"))));
+	newSelectedButton->add(*(manage(new Gtk::Image(Gdk::Pixbuf::create_from_xpm_data(new_table_xpm)))));
 	newSelectedButton->signal_clicked().connect(sigc::mem_fun(*this, &DBWindow::newSelectedItem));
 	
 	// pack the buttons
@@ -142,20 +151,20 @@ void DBWindow::changeView(int view_id) {
 	// change the button images
 	switch(view_id) {
 		case 0x00: {
-			dImage->set("icons/design_table.xpm");
-			nImage->set("icons/new_table.xpm");
+			dImage->set(Gdk::Pixbuf::create_from_xpm_data(design_table_xpm));
+			nImage->set(Gdk::Pixbuf::create_from_xpm_data(new_table_xpm));
 		};
 		break;
 		
 		case 0x01: {
-			dImage->set("icons/design_form.xpm");
-			nImage->set("icons/new_form.xpm");
+			dImage->set(Gdk::Pixbuf::create_from_xpm_data(design_form_xpm));
+			nImage->set(Gdk::Pixbuf::create_from_xpm_data(new_form_xpm));
 		};
 		break;
 		
 		case 0x02: {
-			dImage->set("icons/design_report.xpm");
-			nImage->set("icons/new_report.xpm");
+			dImage->set(Gdk::Pixbuf::create_from_xpm_data(design_report_xpm));
+			nImage->set(Gdk::Pixbuf::create_from_xpm_data(new_report_xpm));
 		};
 		break;
 	}
