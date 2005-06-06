@@ -50,7 +50,8 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_kaccess_OBJECTS = dbtreeview.$(OBJEXT) dbwindow.$(OBJEXT) \
 	kaccess.$(OBJEXT) mainwindow.$(OBJEXT) \
-	designertreeview.$(OBJEXT) tabledesigner.$(OBJEXT)
+	designertreeview.$(OBJEXT) tabledesigner.$(OBJEXT) \
+	tablemodel.$(OBJEXT)
 kaccess_OBJECTS = $(am_kaccess_OBJECTS)
 kaccess_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(srcdir)
@@ -60,7 +61,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/dbwindow.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/designertreeview.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/kaccess.Po ./$(DEPDIR)/mainwindow.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/tabledesigner.Po
+@AMDEP_TRUE@	./$(DEPDIR)/tabledesigner.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tablemodel.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -153,7 +155,15 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AM_CXXFLAGS = `pkg-config gtkmm-2.4 --cflags`
 kaccess_LDFLAGS = `pkg-config gtkmm-2.4 --libs` -lxml2
-kaccess_SOURCES = buttons.h dbtreeview.cpp dbtreeview.h dbwindow.cpp dbwindow.h kaccess.cpp mainwindow.cpp mainwindow.h tabledesigner/designertreeview.cpp tabledesigner/designertreeview.h tabledesigner/tabledesigner.cpp tabledesigner/tabledesigner.h
+kaccess_SOURCES = buttons.h \
+		  dbtreeview.cpp dbtreeview.h \
+		  dbwindow.cpp dbwindow.h \
+		  kaccess.cpp \
+		  mainwindow.cpp mainwindow.h \
+		  tabledesigner/designertreeview.cpp tabledesigner/designertreeview.h \
+		  tabledesigner/tabledesigner.cpp tabledesigner/tabledesigner.h \
+		  tabledesigner/tablemodel.cpp tabledesigner/tablemodel.h
+
 CLEANFILES = *~ *.o
 all: all-am
 
@@ -227,6 +237,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kaccess.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mainwindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tabledesigner.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tablemodel.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -275,6 +286,22 @@ tabledesigner.obj: tabledesigner/tabledesigner.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/tabledesigner.Po' tmpdepfile='$(DEPDIR)/tabledesigner.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tabledesigner.obj `if test -f 'tabledesigner/tabledesigner.cpp'; then $(CYGPATH_W) 'tabledesigner/tabledesigner.cpp'; else $(CYGPATH_W) '$(srcdir)/tabledesigner/tabledesigner.cpp'; fi`
+
+tablemodel.o: tabledesigner/tablemodel.cpp
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tablemodel.o -MD -MP -MF "$(DEPDIR)/tablemodel.Tpo" -c -o tablemodel.o `test -f 'tabledesigner/tablemodel.cpp' || echo '$(srcdir)/'`tabledesigner/tablemodel.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/tablemodel.Tpo" "$(DEPDIR)/tablemodel.Po"; else rm -f "$(DEPDIR)/tablemodel.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='tabledesigner/tablemodel.cpp' object='tablemodel.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/tablemodel.Po' tmpdepfile='$(DEPDIR)/tablemodel.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tablemodel.o `test -f 'tabledesigner/tablemodel.cpp' || echo '$(srcdir)/'`tabledesigner/tablemodel.cpp
+
+tablemodel.obj: tabledesigner/tablemodel.cpp
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tablemodel.obj -MD -MP -MF "$(DEPDIR)/tablemodel.Tpo" -c -o tablemodel.obj `if test -f 'tabledesigner/tablemodel.cpp'; then $(CYGPATH_W) 'tabledesigner/tablemodel.cpp'; else $(CYGPATH_W) '$(srcdir)/tabledesigner/tablemodel.cpp'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/tablemodel.Tpo" "$(DEPDIR)/tablemodel.Po"; else rm -f "$(DEPDIR)/tablemodel.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='tabledesigner/tablemodel.cpp' object='tablemodel.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/tablemodel.Po' tmpdepfile='$(DEPDIR)/tablemodel.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tablemodel.obj `if test -f 'tabledesigner/tablemodel.cpp'; then $(CYGPATH_W) 'tabledesigner/tablemodel.cpp'; else $(CYGPATH_W) '$(srcdir)/tabledesigner/tablemodel.cpp'; fi`
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
