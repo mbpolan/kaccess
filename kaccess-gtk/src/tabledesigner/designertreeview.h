@@ -60,6 +60,9 @@ class DesignerTreeView: public Gtk::TreeView {
 				Gtk::TreeModelColumn<Glib::ustring> fieldDescription;
 		};
 		
+		// signal handlers
+		void onCellEdited(const Glib::ustring &path, const Glib::ustring &text);
+		
 	public:
 		/// The column record for this tree view
 		DesignerTreeViewColumnRecord colRec;

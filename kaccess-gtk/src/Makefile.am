@@ -9,6 +9,9 @@ kaccess_SOURCES = buttons.h \
 		  kaccess.cpp \
 		  mainwindow.cpp mainwindow.h \
 		  tabledesigner/designertreeview.cpp tabledesigner/designertreeview.h \
+		  tabledesigner/cellrendererlist.cpp tabledesigner/cellrenderer.h \
+		  tabledesigner/cellrendererpopup.cpp tabledesigner/cellrendererpopup.h \
+		  tabledesigner/popupentry.cpp tabledesigner/popupentry.h \
 		  tabledesigner/tabledesigner.cpp tabledesigner/tabledesigner.h \
 		  tabledesigner/tablemodel.cpp tabledesigner/tablemodel.h
 
