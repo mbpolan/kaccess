@@ -15,41 +15,63 @@
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- ***************************************************************************/ 
-// triplet.h: template class holding three different types of data 
+ ***************************************************************************/
+// tableviewer.h: the TableViewer class
 
-#ifndef TRIPLET_H
-#define TRIPLET_H
+#ifndef TABLEVIEWER_H
+#define TABLEVIEWER_H
 
-/** A template class that holds three different types of data.
-  * This is a simple template class that can hold three different kinds
-  * of data.
-*/
-template <class TX, class TY, class TZ>
-class Triplet {
+#include <gtkmm/actiongroup.h>
+#include <gtkmm/box.h>
+#include <gtkmm/liststore.h>
+#include <gtkmm/statusbar.h>
+#include <gtkmm/toolbar.h>
+#include <gtkmm/tooltips.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/uimanager.h>
+#include <gtkmm/window.h>
+#include <vector>
+#include "tablemodel.h" 
+
+class TableViewer: public Gtk::Window {
 	public:
-		/// Default constructor
-		Triplet() {};
+		TableViewer(TableModel *tmodel);
+		virtual ~TableViewer() {};
 		
-		/** Constructor taking three parameters
-		  * Creates a triple with the following data provided.
-		  * \param dataA The first data
-		  * \param dataB The second data
-		  * \param dataC The third data
-		*/
-		Triplet(TX dataA, TY dataB, TZ dataC): first(dataA), second(dataB), third(dataC) {};
+		void setModel(TableModel *tmodel) { model=tmodel; };
+		TableModel* getModel() const { return model; };
+		void clear();
 		
-		/// Destructor
-		virtual ~Triplet() {};
+	protected:
+		// signal handlers
+		void addRecords();
 		
-		/// First data variable
-		TX first;
+		// widgets
+		Gtk::VBox *vbox;
+		Gtk::Statusbar *statsbar;
+		Gtk::Toolbar *toolbar;
 		
-		/// Second data variable
-		TY second;
+		// this class's column record
+		class ColumnRecord: public Gtk::TreeModel::ColumnRecord {
+			public:
+				ColumnRecord() {
+				};
+				
+				std::vector<Gtk::TreeModelColumn<Glib::ustring> > stringVec;
+		};
 		
-		/// Third data variable
-		TZ third;
+		TableModel *model;
+		
+		// tree view related
+		Gtk::TreeView *tview;
+		Glib::RefPtr<Gtk::ListStore> lstore;
+		
+		// action group and ui manager
+		Glib::RefPtr<Gtk::ActionGroup> actionGroup;
+		Glib::RefPtr<Gtk::UIManager> uiManager;
+	
+	public:
+		ColumnRecord colRec;
 };
 
 #endif

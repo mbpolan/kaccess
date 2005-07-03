@@ -39,16 +39,15 @@ TableModel::~TableModel() {
 };
 
 // function to add a row to the model
-void TableModel::addRow(std::string name, TableDataModel *data, std::string description) {
-	Triplet<std::string, TableDataModel*, std::string> t(name, data, description);
-	modelData.push_back(t);
+void TableModel::addRow(const Row &row) {
+	modelData.push_back(row);
 };
 
 // function to remove a row based on name
 bool TableModel::removeRowByName(std::string name) {
 	for(TableModelIterator it=modelData.begin(); it!=modelData.end(); ++it) {
-		if ((*it).first==name) {
-			delete (*it).second;
+		if ((*it).getName()==name) {
+			delete (*it).getData();
 			it=modelData.erase(it);
 			
 			return true;
@@ -59,13 +58,23 @@ bool TableModel::removeRowByName(std::string name) {
 };
 
 // function to insert a row
-void TableModel::insertRowByPos(int pos, std::string name, TableDataModel *data, std::string description) {
+void TableModel::insertRowByPos(int pos, const Row &row) {
 	int c=0;
 	for (TableModelIterator it=modelData.begin(); it!=modelData.end(); ++it) {
 		if (c==pos) {
-			Triplet<std::string, TableDataModel*, std::string> t(name, data, description);
-			modelData.insert(it, t);
+			modelData.insert(it, row);
 			break;
 		}
+	}
+};
+
+// function to get a row
+TableModel::Row TableModel::getRow(int pos) const {
+	int c=0;
+	for (TableModelConstIterator it=modelData.begin(); it!=modelData.end(); ++it) {
+		if ((*it).getData() && c==pos)
+			return (*it);
+		
+		c+=1;
 	}
 };

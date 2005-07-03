@@ -20,6 +20,7 @@
 #ifndef DESIGNERTREEVIEW_H
 #define DESIGNERTREEVIEW_H
 
+#include <gtkmm/menu.h>
 #include <gtkmm/treestore.h>
 #include <gtkmm/treeview.h>
 
@@ -42,6 +43,24 @@ class DesignerTreeView: public Gtk::TreeView {
 		/// The model used for this view
 		Glib::RefPtr<Gtk::TreeStore> tstore;
 		
+		/// typedef'd column clicked signal
+		typedef sigc::signal<void, int> colClickedSig;
+		
+		/// Signal emited when a column is clicked
+		colClickedSig sigColumnClicked() const { return signalColumnClicked; };
+		
+		/// Check if the primary key is set
+		bool isPKeySet() const { return pkeySet; };
+		
+		/// Check if the table is valid
+		bool tableValid();
+		
+		/// Check if the first row is valid
+		bool isFirstRowValid();
+		
+		/// Automatically set a primary key
+		bool setAutoPrimaryKey();
+		
 	private:
 		/// The column record containing three columns appropriate for this class
 		class DesignerTreeViewColumnRecord: public Gtk::TreeModel::ColumnRecord {
@@ -60,8 +79,25 @@ class DesignerTreeView: public Gtk::TreeView {
 				Gtk::TreeModelColumn<Glib::ustring> fieldDescription;
 		};
 		
+		// overloaded virtual functions
+		virtual bool on_button_press_event(GdkEventButton*);
+		
 		// signal handlers
 		void onCellEdited(const Glib::ustring &path, const Glib::ustring &text);
+		void onNameColumnClicked() { sigColumnClicked().emit(0x0); };
+		void onTypeColumnClicked() { sigColumnClicked().emit(0x1); };
+		void onDescColumnClicked() { sigColumnClicked().emit(0x2); };
+		void setPrimaryKey();
+		void unsetPrimaryKey();
+		
+		// signal instances
+		colClickedSig signalColumnClicked;
+		
+		// context menu
+		Gtk::Menu contextMenu;
+		
+		// primary key boolean
+		bool pkeySet;
 		
 	public:
 		/// The column record for this tree view

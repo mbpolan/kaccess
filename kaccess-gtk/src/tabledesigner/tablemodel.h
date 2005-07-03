@@ -38,9 +38,6 @@ class TableDataModel {
 	protected:
 };
 
-/// Typedef'd model iterator
-typedef std::list<Triplet<std::string, TableDataModel*, std::string> >::iterator TableModelIterator;
-
 /** Class that stores information about a table. 
   * The TableModel class simply accomplishes the function of storing information
   * about a table. This class can be useful if you wish to dump the data from the TableDesigner
@@ -52,13 +49,49 @@ class TableModel {
 		TableModel();
 		virtual ~TableModel();
 		
+		/// A single row in the TableDesigner
+		class Row {
+			public:
+				/// Default constructor
+				Row() {};
+				
+				/** Constructor
+				  * \paran name The row's name
+				  * \param data TableDataModel for this row
+				  * \param description A description of this row
+				*/
+				Row(std::string name, TableDataModel *data, std::string description) {
+					attrs.first=name;
+					attrs.second=data;
+					attrs.third=description; 
+				};
+				
+				/** Get the row's name
+				  * \return The name of the row
+				*/
+				std::string getName() const { return attrs.first; };
+				
+				/** Get this row's attribute data
+				  * \return The attribute data for this row
+				*/
+				TableDataModel* getData() const { return attrs.second; };
+				
+				/** Get this row's description
+				  * \param The description for this row
+				*/
+				std::string getDescription() const { return attrs.third; };
+				
+			protected:
+				Triplet<std::string, TableDataModel*, std::string> attrs;
+		};
+		
 		/// Function to add a row to the model.
 		/** Adds a new row to the model following the parameters provided.
 		  * \param name The name of the field
 		  * \param data An instance of TableDataModel holding the attributes for this row
 		  * \param description A brief description of this row's purpose
 		*/
-		void addRow(std::string name, TableDataModel *data, std::string description);
+		void addRow(const Row &row);
 		
 		/// Remove a row from the table by name
 		/** Removes a row from the model based on name of the row
@@ -74,11 +107,53 @@ class TableModel {
 		  * \param data An instance of TableDataModel holding the attributes for this row
 		  * \param description A brief description of this row's purpose
 		*/
-		void insertRowByPos(int pos, std::string name, TableDataModel *data, std::string description);
+		void insertRowByPos(int pos, const Row &row);
+		
+		/** Get the size of the model
+		  * \return The size of this model
+		*/
+		int size() const { return modelData.size(); };
+		
+		/** Get a certain row from the model
+		  * \return The requested row's Triplet
+		*/
+		Row getRow(int pos) const;
+		
+		/** Set the row with the primary key
+		  * \param row The target row
+		*/
+		void setPKeyRow(int row) { pkeyRow=row; };
+		
+		/** Get the row containing the primary key
+		  * \return The row number
+		*/
+		int getPKeyRow() const { return pkeyRow; };
+		
+		/** Set the name of this table
+		  * \param _name The name of this table
+		*/
+		void setName(std::string _name) { name=_name; };
+		
+		/** Get the name of this table
+		  * \return The table's name
+		*/
+		std::string getName() const { return name; };
 		
 	protected:
 		/// List of rows and their respective attributes
-		std::list<Triplet<std::string, TableDataModel*, std::string> > modelData;
+		std::list<Row > modelData;
+		
+		/// The row that is the primary key
+		int pkeyRow;
+		
+		/// The name of this table
+		std::string name;
 };
+
+// typedef'd TableModel iterator
+typedef std::list<TableModel::Row>::iterator TableModelIterator;
+
+// typedef'd const TableModel iterator
+typedef std::list<TableModel::Row>::const_iterator TableModelConstIterator;
 
 #endif

@@ -17,14 +17,23 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
+#include <gtkmm/messagedialog.h> 
 #include "cellrendererlist.h"
 #include "designertreeview.h"
 
 // constructor
-DesignerTreeView::DesignerTreeView(bool makeDefaults): Gtk::TreeView() {
+DesignerTreeView::DesignerTreeView(bool makeDefaults): Gtk::TreeView(), pkeySet(false) {
 	// create the model
 	tstore=Glib::RefPtr<Gtk::TreeStore>::RefPtr(Gtk::TreeStore::create(colRec));
 	set_model(tstore);
+	
+	// populate the context menu
+	Gtk::Menu::MenuList mList=contextMenu.items();
+	mList.push_back(Gtk::Menu_Helpers::MenuElem("_Set Primary Key",
+			sigc::mem_fun(*this, &DesignerTreeView::setPrimaryKey)));
+	
+	mList.push_back(Gtk::Menu_Helpers::MenuElem("_Unset Primary Key",
+			sigc::mem_fun(*this, &DesignerTreeView::unsetPrimaryKey)));
 	
 	// should we make some initial columns?
 	if (makeDefaults) {
@@ -61,12 +70,15 @@ DesignerTreeView::DesignerTreeView(bool makeDefaults): Gtk::TreeView() {
 		
 		// other attributes
 		get_column(0)->set_clickable(false);
-		get_column(0)->set_fixed_width(20);
-		get_column(0)->set_sizing(Gtk::TREE_VIEW_COLUMN_FIXED);
 		
 		// add 50 rows
 		for (int i=0; i<50; i++)
 			tstore->append();
+			
+		// connect column signals
+		get_column(1)->signal_clicked().connect(sigc::mem_fun(*this, &DesignerTreeView::onNameColumnClicked));
+		get_column(2)->signal_clicked().connect(sigc::mem_fun(*this, &DesignerTreeView::onTypeColumnClicked));
+		get_column(3)->signal_clicked().connect(sigc::mem_fun(*this, &DesignerTreeView::onDescColumnClicked));
 	}
 };
 
@@ -74,8 +86,97 @@ DesignerTreeView::DesignerTreeView(bool makeDefaults): Gtk::TreeView() {
 DesignerTreeView::~DesignerTreeView() {
 };
 
+// check if this table is valid
+bool DesignerTreeView::tableValid() {
+	// check if at least the first row of the table is filled
+	if (!isFirstRowValid()) {
+		Gtk::MessageDialog md("The first row of the TableDesigner must be valid!", false, Gtk::MESSAGE_ERROR,
+					Gtk::BUTTONS_OK, true);
+		md.run();
+		return false;
+	}
+	
+	// check if a primary key is set
+	if (!isPKeySet()) {
+		Gtk::MessageDialog md("A primary key is not set. Should KAccess set a primary key for you?", false, Gtk::MESSAGE_QUESTION,
+					Gtk::BUTTONS_YES_NO, true);
+		
+		// see if the user wants to auto set a primary key
+		if (md.run()==(-8))
+			return setAutoPrimaryKey();
+		
+		else
+			return false;
+	}
+	
+	else
+		return true;
+};
+
+// check if the first row is valid
+bool DesignerTreeView::isFirstRowValid() {
+	Gtk::TreeModel::iterator it=tstore->children().begin();
+	if ((*it)) {
+		Glib::ustring value=(*it)[colRec.fieldName];
+		return (value.size()>0);
+	}
+	
+	else
+		return false;
+};
+
+// automatically set a primary key
+bool DesignerTreeView::setAutoPrimaryKey() {
+	if (isFirstRowValid()) {
+		Gtk::TreeModel::iterator it=tstore->children().begin();
+		if (it)
+			(*it)[colRec.generic]="P";
+	}
+};
+
 // update the modified cell
 void DesignerTreeView::onCellEdited(const Glib::ustring &path, const Glib::ustring &text) {
 	Gtk::TreeModel::Row row=*tstore->get_iter(Gtk::TreeModel::Path(path));
 	row[colRec.fieldType]=text;
+};
+
+// overloaded virtual key press event function
+bool DesignerTreeView::on_button_press_event(GdkEventButton *b) {
+	bool ret=Gtk::TreeView::on_button_press_event(b);
+	
+	if (b->type==GDK_BUTTON_PRESS && b->button==3)
+		contextMenu.popup(b->button, b->time);
+	
+	return ret;
+};
+
+// function to set a row as a primary key
+void DesignerTreeView::setPrimaryKey() {
+	Glib::RefPtr<Gtk::TreeView::Selection> sel=get_selection();
+	if (sel) {
+		Gtk::TreeModel::iterator it=sel->get_selected();
+		if ((*it)) {
+			// reset other rows
+			for (Gtk::TreeModel::iterator _it=tstore->children().begin(); _it!=tstore->children().end(); ++_it) {
+				if ((*_it) && (*_it)[colRec.generic]=="P")
+					(*_it)[colRec.generic]="";
+			}
+			
+			// set the new primary key
+			(*it)[colRec.generic]="P";
+			pkeySet=true;
+		}
+	}
+};
+
+// function to remove a primary key
+void DesignerTreeView::unsetPrimaryKey() {
+	Glib::RefPtr<Gtk::TreeView::Selection> sel=get_selection();
+	if (sel) {
+		Gtk::TreeModel::iterator it=sel->get_selected();
+		if (it) {
+			(*it)[colRec.generic]="";
+			pkeySet=false;
+		}
+	}
 };

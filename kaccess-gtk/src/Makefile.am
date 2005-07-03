@@ -13,6 +13,7 @@ kaccess_SOURCES = buttons.h \
 		  tabledesigner/cellrendererpopup.cpp tabledesigner/cellrendererpopup.h \
 		  tabledesigner/popupentry.cpp tabledesigner/popupentry.h \
 		  tabledesigner/tabledesigner.cpp tabledesigner/tabledesigner.h \
-		  tabledesigner/tablemodel.cpp tabledesigner/tablemodel.h
+		  tabledesigner/tablemodel.cpp tabledesigner/tablemodel.h \
+		  tabledesigner/tableviewer.cpp tabledesigner/tableviewer.h
 
 CLEANFILES = *~ *.o

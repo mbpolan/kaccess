@@ -33,10 +33,16 @@
 #include <gtkmm/uimanager.h>
 #include <gtkmm/window.h>
 #include <list>
+#include <map>
 #include <vector>
 
 #include "buttons.h"
 #include "dbtreeview.h"
+#include "tabledesigner/tablemodel.h"
+
+#define DBWIN_VIEW_TABLES	0
+#define DBWIN_VIEW_FORMS	1
+#define DBWIN_VIEW_REPORTS	2
 
 /** The window that is used for each database for control.
   * This is the window that control all aspects of database management. Everytime
@@ -77,6 +83,8 @@ class DBWindow: public Gtk::Window {
 		void designSelectedItem();
 		void newSelectedItem() { };
 		
+		void saveTable(std::pair<std::string, TableModel*>);
+		
 		// containers
 		Gtk::Frame *frame;
 		Gtk::Table *table;
@@ -96,6 +104,9 @@ class DBWindow: public Gtk::Window {
 		
 		// vector of tree views
 		std::vector<DBTreeView*> views;
+		
+		// map of tables
+		std::map<std::string, TableModel*> tables;
 		
 		// other vars
 		int currentView;

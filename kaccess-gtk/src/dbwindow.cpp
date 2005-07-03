@@ -25,6 +25,7 @@
 
 #include "dbwindow.h"
 #include "tabledesigner/tabledesigner.h"
+#include "tabledesigner/tableviewer.h"
 
 // icons
 #include "icons/design_table.xpm"
@@ -99,10 +100,6 @@ DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
 	views[0]->append_column("Tables", views[0]->colRec.item);
 	views[1]->append_column("Forms", views[1]->colRec.item);
 	views[2]->append_column("Reports", views[2]->colRec.item);
-	
-	// make some rows containign options
-	Gtk::TreeModel::Row row=*(views[0]->getTreeModel()->append());
-	row[views[0]->colRec.item]="Create a table in design view";
 	
 	// now make the scrolled window for the tree view
 	sWindow=manage(new Gtk::ScrolledWindow);
@@ -180,11 +177,30 @@ void DBWindow::openTarget() {
 	Glib::RefPtr<Gtk::TreeView::Selection> sel=views[currentView]->get_selection();
 	if (sel) {
 		Gtk::TreeModel::iterator it=sel->get_selected();
+		Glib::ustring name=(*it)[views[currentView]->colRec.item];
 		
 		#ifdef DEBUG
 			std::cout << "File: " << __FILE__ << " at line: " << __LINE__ << ": Should open target: "
-				  << (*it)[views[currentView]->colRec.item] << "\n";
+				  << name << "\n";
 		#endif
+		
+		// check what kind of item this is
+		switch(currentView) {
+			case DBWIN_VIEW_TABLES: {
+				TableViewer *tv=new TableViewer(tables[name]);
+				tv->present();
+				destroyQueue.push_back(tv);
+			};
+			break;
+			
+			case DBWIN_VIEW_FORMS: {
+			};
+			break;
+			
+			case DBWIN_VIEW_REPORTS: {
+			};
+			break;
+		}
 		
 	}
 };
@@ -205,6 +221,7 @@ void DBWindow::designSelectedItem() {
 	switch(currentView) {
 		case 0x00: {
 			TableDesigner *tb=new TableDesigner;
+			tb->sigSaveTable().connect(sigc::mem_fun(*this, &DBWindow::saveTable));
 			tb->present();
 			
 			destroyQueue.push_back(tb);
@@ -215,4 +232,17 @@ void DBWindow::designSelectedItem() {
 		
 		case 0x02: break;
 	}
+};
+
+// function to complete saving a table
+void DBWindow::saveTable(std::pair<std::string, TableModel*> p) {
+	std::string name=p.first;
+	TableModel *tmodel=p.second;
+	
+	// add a row
+	Gtk::TreeModel::Row row=*(views[DBWIN_VIEW_TABLES]->getTreeModel()->append());
+	row[views[DBWIN_VIEW_TABLES]->colRec.item]=name;
+	
+	// add the model to the map
+	tables[name]=tmodel;
 };

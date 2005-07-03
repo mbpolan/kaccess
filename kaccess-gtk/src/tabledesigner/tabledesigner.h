@@ -27,8 +27,8 @@
 #include <gtkmm/label.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/window.h>
-
 #include "designertreeview.h"
+#include "tablemodel.h"
 
 /** The standard designer for tables.
   * The TableDesigner is the graphical designer for new tables. It basically
@@ -49,7 +49,18 @@ class TableDesigner: public Gtk::Window {
 		/// Destructor
 		virtual ~TableDesigner();
 		
+		/// typedef'd save signal
+		typedef sigc::signal<void, std::pair<std::string, TableModel*> > saveSig;
+		
+		/// Save table signal
+		saveSig sigSaveTable() const { return signalSaveTable; };
+		
 	private:
+		// signal handlers
+		void onSaveTable();
+		void onCancel();
+		void updateDescriptions(int id);
+		
 		// containers
 		Gtk::VBox *vb;
 		Gtk::HBox *hb;
@@ -66,6 +77,9 @@ class TableDesigner: public Gtk::Window {
 		
 		// tree view
 		DesignerTreeView *dtview;
+		
+		// save table signal instance
+		saveSig signalSaveTable;
 };
 
 #endif
