@@ -37,7 +37,7 @@ TableViewer::TableViewer(TableModel *tmodel): Gtk::Window(), model(tmodel) {
 	actionGroup=Gtk::ActionGroup::create();
 	
 	// add actions
-	actionGroup->add(Gtk::Action::create("ToolInsert", Gtk::Stock::ADD, "Add Row", "Added another record"),
+	actionGroup->add(Gtk::Action::create("ToolInsert", Gtk::Stock::ADD, "Add Records", "Added more records"),
 			sigc::mem_fun(*this, &TableViewer::addRecords));
 		
 	// create the ui manager
@@ -83,7 +83,17 @@ TableViewer::TableViewer(TableModel *tmodel): Gtk::Window(), model(tmodel) {
 		std::string header=row.getName();
 		
 		// append the column
-		tview->append_column_editable(header, colRec.stringVec[i]);
+		int cols=tview->append_column_editable(header, colRec.stringVec[i]);
+		
+		// check if this row is the primary key
+		int pkey=model->getPKeyRow();
+		if (pkey==i) {
+			// make the renderer color the background light blue for this column
+			// FIXME: not all primary keys will be rendered as text cells
+			Gtk::CellRendererText *renderer=dynamic_cast<Gtk::CellRendererText*> (tview->get_column_cell_renderer(cols-1));
+			if (renderer)
+				renderer->property_background()="LightBlue";
+		}
 		
 		// TODO: apply the description
 		//descriptions.push_back(row.getDescription());
@@ -120,7 +130,7 @@ void TableViewer::addRecords() {
 	// spin button
 	Gtk::SpinButton *sb=new Gtk::SpinButton;
 	Gtk::Adjustment adj(1, 1, 50);
-	sb->configure(adj, 1, 2);
+	sb->configure(adj, 1, 0);
 	
 	// pack widgets
 	vb->pack_start(*manage(new Gtk::Label("Enter the amount of records to add.")), Gtk::PACK_SHRINK);
