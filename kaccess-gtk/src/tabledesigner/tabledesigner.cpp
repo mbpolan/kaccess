@@ -52,7 +52,8 @@ TableDesigner::TableDesigner(): Gtk::Window() {
 	editorWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 	
 	// field description label
-	msgLabel=manage(new Gtk::Label("Using the TableDesigner you can easily create your own tables."));
+	msgLabel=manage(new Gtk::Label());
+	msgLabel->set_markup("<span foreground='blue'>Using the TableDesigner you can easily create your own tables.</span>");
 	
 	// pack the scrolled window and label into the HBox
 	hb->pack_start(*editorWindow);
@@ -151,9 +152,17 @@ void TableDesigner::onSaveTable() {
 void TableDesigner::updateDescriptions(int id) {
 	// change the description label
 	switch(id) {
-		case 0x00: msgLabel->set_text("This is the name of the field that will appear as a new column in your table."); break;
-		case 0x01: msgLabel->set_text("What kind of data should this field store is set here."); break;
-		case 0x02: msgLabel->set_text("Enter a description of this field to help you remember its " 
-						"purpose later."); break;
+		case 0x00: msgLabel->set_markup("<span foreground='blue'>"
+						"This is the name of the field that will appear as a new column in your table."
+						"</span>"); break;
+		
+		case 0x01: msgLabel->set_markup("<span foreground='blue'>"
+						"What kind of data should this field store is set here."
+						"</span>"); break;
+		
+		case 0x02: msgLabel->set_markup("<span foreground='blue'>"
+						"Enter a description of this field to help you remember its " 
+						"purpose later."
+						"</span>"); break;
 	}
 };
