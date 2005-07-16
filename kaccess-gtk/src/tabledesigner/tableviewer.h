@@ -58,6 +58,7 @@ class TableViewer: public Gtk::Window {
 				};
 				
 				std::vector<Gtk::TreeModelColumn<Glib::ustring> > stringVec;
+				std::vector<Gtk::TreeModelColumn<bool> > boolVec;
 		};
 		
 		TableModel *model;

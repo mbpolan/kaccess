@@ -63,9 +63,26 @@ TableViewer::TableViewer(TableModel *tmodel): Gtk::Window(), model(tmodel) {
 	
 	// add the column models
 	for (int i=0; i<model->size(); i++) {
-		Gtk::TreeModelColumn<Glib::ustring> col;
-		colRec.add(col);
-		colRec.stringVec.push_back(col);
+		// add the appropriate column type
+		ROW_TYPE _TYPE=model->getRow(i).getData()->getRowType();
+		
+		// check the type
+		switch(_TYPE) {
+			default:
+			case ROW_TEXT: {
+				Gtk::TreeModelColumn<Glib::ustring> col;
+				colRec.add(col);
+				colRec.stringVec.push_back(col);
+			};
+			break;
+			
+			case ROW_YES_NO: {
+				Gtk::TreeModelColumn<bool> col;
+				colRec.add(col);
+				colRec.boolVec.push_back(col);
+			};
+			break;
+		}
 	}
 	
 	// create the liststore
@@ -76,23 +93,45 @@ TableViewer::TableViewer(TableModel *tmodel): Gtk::Window(), model(tmodel) {
 	
 	// create the table based on the model
 	TableModel::Row row;
+	int b=0, s=0;
 	for (int i=0; i<model->size(); i++) {
 		row=model->getRow(i);
 		
 		// get the header
 		std::string header=row.getName();
 		
-		// append the column
-		int cols=tview->append_column_editable(header, colRec.stringVec[i]);
+		// get the type
+		ROW_TYPE _TYPE=row.getData()->getRowType();
+		
+		// append the proper column
+		int cols;
+		switch(_TYPE) {
+			// all others
+			default:
+			
+			// text
+			case ROW_TEXT: {
+				cols=tview->append_column_editable(header, colRec.stringVec[s]); 
+				s+=1;
+			};
+			break;
+			
+			// yes/no row
+			case ROW_YES_NO: {
+				cols=tview->append_column_editable(header, colRec.boolVec[b]);
+				b+=1;
+			};
+			break;
+		}
 		
 		// check if this row is the primary key
 		int pkey=model->getPKeyRow();
 		if (pkey==i) {
 			// make the renderer color the background light blue for this column
-			// FIXME: not all primary keys will be rendered as text cells
-			Gtk::CellRendererText *renderer=dynamic_cast<Gtk::CellRendererText*> (tview->get_column_cell_renderer(cols-1));
+			//Gtk::CellRendererText *renderer=dynamic_cast<Gtk::CellRendererText*> (tview->get_column_cell_renderer(cols-1));
+			Gtk::CellRenderer *renderer=tview->get_column_cell_renderer(cols-1);
 			if (renderer)
-				renderer->property_background()="LightBlue";
+				renderer->property_cell_background()="LightBlue";
 		}
 		
 		// TODO: apply the description
