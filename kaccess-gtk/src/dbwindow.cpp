@@ -37,7 +37,7 @@
 #include "icons/open_generic.xpm"
 
 // constructor for DBWindow
-DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
+DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0), tips() {
 	set_title(title);
 	set_border_width(4);
 	
@@ -79,6 +79,14 @@ DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
 	
 	reportsButton=manage(new IDButton("Reports", 0x02));
 	reportsButton->signal_clicked_with_id.connect(sigc::mem_fun(*this, &DBWindow::changeView));
+	
+	// tooltips
+	tips.set_tip(*openSelectedButton, "Open the selected item");
+	tips.set_tip(*designSelectedButton, "Design a new instance of the current item");
+	tips.set_tip(*newSelectedButton, "Create a new instance of the current item");
+	tips.set_tip(*tablesButton, "View the tables in this database");
+	tips.set_tip(*formsButton, "View the forms in this database");
+	tips.set_tip(*reportsButton, "View the reports in this database");
 	
 	// pack the buttons into a vbox
 	vb->pack_start(*tablesButton);

@@ -30,6 +30,7 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/table.h>
+#include <gtkmm/tooltips.h>
 #include <gtkmm/uimanager.h>
 #include <gtkmm/window.h>
 #include <list>
@@ -103,6 +104,9 @@ class DBWindow: public Gtk::Window {
 		Gtk::Button *openSelectedButton;
 		Gtk::Button *designSelectedButton;
 		Gtk::Button *newSelectedButton;
+		
+		// tooltips
+		Gtk::Tooltips tips;
 		
 		// vector of tree views
 		std::vector<DBTreeView*> views;
