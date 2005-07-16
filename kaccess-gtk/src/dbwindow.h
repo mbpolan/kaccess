@@ -39,6 +39,8 @@
 #include "buttons.h"
 #include "dbtreeview.h"
 #include "tabledesigner/tablemodel.h"
+#include "tabledesigner/tableviewer.h"
+#include "triplelist.h"
 
 #define DBWIN_VIEW_TABLES	0
 #define DBWIN_VIEW_FORMS	1
@@ -83,7 +85,7 @@ class DBWindow: public Gtk::Window {
 		void designSelectedItem();
 		void newSelectedItem() { };
 		
-		void saveTable(std::pair<std::string, TableModel*>);
+		void saveTable(std::pair<std::string, TableModel*>, bool);
 		
 		// containers
 		Gtk::Frame *frame;
@@ -105,8 +107,8 @@ class DBWindow: public Gtk::Window {
 		// vector of tree views
 		std::vector<DBTreeView*> views;
 		
-		// map of tables
-		std::map<std::string, TableModel*> tables;
+		// list of tables
+		TripleList<std::string, TableModel*, TableViewer*> tables;
 		
 		// other vars
 		int currentView;

@@ -26,16 +26,39 @@
 
 #include "../triplet.h"
 
+/// Enumerated row type
+enum ROW_TYPE { ROW_TEXT	= 0x00, 
+		ROW_NUMBER	= 0x01, 
+		ROW_DATE_TIME	= 0x02, 
+		ROW_MEMO	= 0x03, 
+		ROW_YES_NO	= 0x04 
+	      };
+
 /** Class that stores information about the type of field in a table.
   * Every field in a table has its own attributes, and this class is used
   * to store that information.
 */
 class TableDataModel {
 	public:
+		/// Constructor
 		TableDataModel();
+		
+		/// Destructor
 		virtual ~TableDataModel();
 		
+		/** Set the ROW_TYPE of row
+		  * \param _type The type of row
+		*/
+		void setRowType(ROW_TYPE _type) { type=_type; };
+		
+		/** Get the ROW_TYPE for this row
+		  * \return The type of row
+		*/
+		ROW_TYPE getRowType() const { return type; };
+		
 	protected:
+		// the type of row
+		ROW_TYPE type;
 };
 
 /** Class that stores information about a table. 

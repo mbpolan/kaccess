@@ -31,7 +31,8 @@ DBTreeView::DBTreeView(): Gtk::TreeView() {
 		
 	// set up the menu
 	items.push_back(Gtk::Menu_Helpers::MenuElem("_Edit Name", sigc::mem_fun(*this, &DBTreeView::onEditMenuPopup)));
-		
+	items.push_back(Gtk::Menu_Helpers::MenuElem("_Modify", sigc::mem_fun(*this, &DBTreeView::onModifyMenuPopup)));
+	
 	cMenu->accelerate(*this);
 };
 
@@ -48,7 +49,7 @@ bool DBTreeView::on_button_press_event(GdkEventButton *e) {
 	// double click with first mouse button event
 	if (e && e->type==GDK_2BUTTON_PRESS && e->button==1) {
 		// emit the double clicked signal
-		this->itemDoubleClicked();
+		this->sigItemDoubleClicked().emit();
 	}
 	
 	// single click with right mouse button event
@@ -66,6 +67,17 @@ void DBTreeView::onEditMenuPopup() {
 		Gtk::TreeModel::iterator it=sel->get_selected();
 		
 		if (it && (*it))
-			this->itemRequestEdit(it);
+			this->sigItemRequestNameEdit().emit(it);
+	}
+};
+
+// signal handler for context menu
+void DBTreeView::onModifyMenuPopup() {
+	Glib::RefPtr<Gtk::TreeView::Selection> sel=get_selection();
+	if (sel) {
+		Gtk::TreeModel::iterator it=sel->get_selected();
+		
+		if (it && (*it))
+			this->sigItemRequestEdit().emit(it);
 	}
 };

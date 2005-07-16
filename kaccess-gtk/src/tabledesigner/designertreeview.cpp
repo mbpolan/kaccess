@@ -54,6 +54,7 @@ DesignerTreeView::DesignerTreeView(bool makeDefaults): Gtk::TreeView(), pkeySet(
 		renderer->append_list_item("Number");
 		renderer->append_list_item("Date/Time");
 		renderer->append_list_item("Memo");
+		renderer->append_list_item("Yes/No");
 		
 		renderer->property_editable()=true;
 		renderer->signal_edited().connect(sigc::mem_fun(*this, &DesignerTreeView::onCellEdited));
@@ -84,6 +85,27 @@ DesignerTreeView::DesignerTreeView(bool makeDefaults): Gtk::TreeView(), pkeySet(
 
 // destructor
 DesignerTreeView::~DesignerTreeView() {
+};
+
+// set the primary key for a row
+void DesignerTreeView::setPKeyRow(int row) {
+	this->pkeySet=true;
+	
+	// clear the generic column first
+	for (Gtk::TreeModel::iterator it=tstore->children().begin(); it!=tstore->children().end(); ++it) {
+		if ((*it))
+			(*it)[colRec.generic]="";
+	}
+	
+	// set the row
+	int c=0;
+	for (Gtk::TreeModel::iterator it=tstore->children().begin(); it!=tstore->children().end(); ++it) {
+		if ((*it) && c==row) {
+			(*it)[colRec.generic]="P";
+			break;
+		}
+		c+=1;
+	}
 };
 
 // check if this table is valid

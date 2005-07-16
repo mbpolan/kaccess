@@ -15,5 +15,7 @@ kaccess_SOURCES = buttons.h \
 		  tabledesigner/tabledesigner.cpp tabledesigner/tabledesigner.h \
 		  tabledesigner/tablemodel.cpp tabledesigner/tablemodel.h \
 		  tabledesigner/tableviewer.cpp tabledesigner/tableviewer.h
+		  triplelist.h \
+		  triplet.h
 
 CLEANFILES = *~ *.o

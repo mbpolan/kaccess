@@ -52,6 +52,9 @@ class DesignerTreeView: public Gtk::TreeView {
 		/// Check if the primary key is set
 		bool isPKeySet() const { return pkeySet; };
 		
+		/// Set the row containing the primary key
+		void setPKeyRow(int row);
+		
 		/// Check if the table is valid
 		bool tableValid();
 		

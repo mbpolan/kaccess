@@ -43,10 +43,13 @@ class DBTreeView: public Gtk::TreeView {
 		
 		// signals
 		/// Signal emitted when an item is double clicked
-		sigc::signal<void> itemDoubleClicked;
+		sigc::signal<void> sigItemDoubleClicked() const { return signalItemDoubleClicked; }
 		
 		/// Signal emitted when an item is requested to be edited
-		sigc::signal<void, Gtk::TreeModel::iterator> itemRequestEdit;
+		sigc::signal<void, Gtk::TreeModel::iterator> sigItemRequestEdit() const { return signalItemRequestEdit; }
+		
+		/// Signal emitted when an item is requesting to have it's name changed
+		sigc::signal<void, Gtk::TreeModel::iterator> sigItemRequestNameEdit() const { return signalItemRequestNameEdit; }
 		
 		/// Derived class containing the column record
 		class DBColumnRecord: public Gtk::TreeModel::ColumnRecord {
@@ -71,12 +74,19 @@ class DBTreeView: public Gtk::TreeView {
 		
 		// signal handlers
 		void onEditMenuPopup();
+		void onModifyMenuPopup();
 		
 		// tree store
 		Glib::RefPtr<Gtk::TreeStore> tstore;
 		
 		// menu
 		Gtk::Menu *cMenu;
+		
+		// signal instances
+		sigc::signal<void> signalItemDoubleClicked;
+		sigc::signal<void, Gtk::TreeModel::iterator> signalItemRequestEdit;
+		sigc::signal<void, Gtk::TreeModel::iterator> signalItemRequestNameEdit;
+		
 };
 
 #endif

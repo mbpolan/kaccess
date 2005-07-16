@@ -49,8 +49,11 @@ class TableDesigner: public Gtk::Window {
 		/// Destructor
 		virtual ~TableDesigner();
 		
+		/// Set a model to be loaded by the designer
+		void setModel(TableModel *tmodel);
+		
 		/// typedef'd save signal
-		typedef sigc::signal<void, std::pair<std::string, TableModel*> > saveSig;
+		typedef sigc::signal<void, std::pair<std::string, TableModel*>, bool> saveSig;
 		
 		/// Save table signal
 		saveSig sigSaveTable() const { return signalSaveTable; };
@@ -60,6 +63,10 @@ class TableDesigner: public Gtk::Window {
 		void onSaveTable();
 		void onCancel();
 		void updateDescriptions(int id);
+		
+		// internal functions
+		ROW_TYPE parseRowTypeByString(std::string type);
+		std::string parseRowTypeByEnum(ROW_TYPE _TYPE);
 		
 		// containers
 		Gtk::VBox *vb;
@@ -80,6 +87,12 @@ class TableDesigner: public Gtk::Window {
 		
 		// save table signal instance
 		saveSig signalSaveTable;
+		
+		// did we already save the table?
+		bool originalSave;
+		
+		// the table's name
+		std::string tname;
 };
 
 #endif

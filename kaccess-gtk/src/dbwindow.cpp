@@ -92,8 +92,8 @@ DBWindow::DBWindow(std::string title): Gtk::Window(), currentView(0) {
 		views[i]->set_size_request(240, 140);
 		
 		// connect signals
-		views[i]->itemDoubleClicked.connect(sigc::mem_fun(*this, &DBWindow::openTarget));
-		views[i]->itemRequestEdit.connect(sigc::mem_fun(*this, &DBWindow::editItem));
+		views[i]->sigItemDoubleClicked().connect(sigc::mem_fun(*this, &DBWindow::openTarget));
+		views[i]->sigItemRequestEdit().connect(sigc::mem_fun(*this, &DBWindow::editItem));
 	}
 	
 	// add some columns
@@ -187,9 +187,8 @@ void DBWindow::openTarget() {
 		// check what kind of item this is
 		switch(currentView) {
 			case DBWIN_VIEW_TABLES: {
-				TableViewer *tv=new TableViewer(tables[name]);
-				tv->present();
-				destroyQueue.push_back(tv);
+				Triplet<std::string, TableModel*, TableViewer*> t=tables.getItems(tables.getPosition(name));
+				t.third->show();
 			};
 			break;
 			
@@ -205,7 +204,7 @@ void DBWindow::openTarget() {
 	}
 };
 
-// function to edit an item's name
+// function to edit an item
 void DBWindow::editItem(Gtk::TreeModel::iterator it) {
 	// name of the item
 	Glib::ustring name=(*it)[views[currentView]->colRec.item];
@@ -213,6 +212,24 @@ void DBWindow::editItem(Gtk::TreeModel::iterator it) {
 	#ifdef DEBUG
 		std::cout << "File: " << __FILE__ << " at line: " << __LINE__ << ": Item to edit: " << name << std::endl;
 	#endif
+	
+	// check what type of item this is based on the active view
+	switch(currentView) {
+		case 0x00: {
+			TableDesigner *td=new TableDesigner;
+			Triplet<std::string, TableModel*, TableViewer*> t=tables.getItems(tables.getPosition(name));
+			td->setModel(t.second);
+			td->sigSaveTable().connect(sigc::mem_fun(*this, &DBWindow::saveTable));
+			td->present();
+			
+			destroyQueue.push_back(td);
+		};
+		break;
+		
+		case 0x01: break;
+		
+		case 0x02: break;
+	}
 };
 
 // function to design a new instance of the current item
@@ -235,14 +252,38 @@ void DBWindow::designSelectedItem() {
 };
 
 // function to complete saving a table
-void DBWindow::saveTable(std::pair<std::string, TableModel*> p) {
+void DBWindow::saveTable(std::pair<std::string, TableModel*> p, bool originalSave) {
 	std::string name=p.first;
 	TableModel *tmodel=p.second;
 	
-	// add a row
-	Gtk::TreeModel::Row row=*(views[DBWIN_VIEW_TABLES]->getTreeModel()->append());
-	row[views[DBWIN_VIEW_TABLES]->colRec.item]=name;
+	// check if we are overwriting or saving a new table
+	if (originalSave) {
+		// add a row
+		Gtk::TreeModel::Row row=*(views[DBWIN_VIEW_TABLES]->getTreeModel()->append());
+		row[views[DBWIN_VIEW_TABLES]->colRec.item]=name;
+		
+		// add the model to the list
+		tables.append(name, tmodel, (new TableViewer(tmodel)));
+	}
 	
-	// add the model to the map
-	tables[name]=tmodel;
+	// overwrite
+	else {
+		// get the triplet
+		int pos=tables.getPosition(name);
+		Triplet<std::string, TableModel*, TableViewer*> t=tables.getItems(pos);
+		
+		// replace models
+		tables.replace2nd(t.second, tmodel);
+		
+		// delete the old one
+		delete t.second;
+		
+		// update the viewer
+		TableViewer *tv=new TableViewer(tmodel);
+		tables.replace3rd(pos, tv);
+		
+		// delete the old viewer
+		delete t.third;
+		
+	}
 };
