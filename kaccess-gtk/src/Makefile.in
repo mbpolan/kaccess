@@ -53,7 +53,7 @@ am_kaccess_OBJECTS = dbtreeview.$(OBJEXT) dbwindow.$(OBJEXT) \
 	designertreeview.$(OBJEXT) cellrendererlist.$(OBJEXT) \
 	cellrendererpopup.$(OBJEXT) popupentry.$(OBJEXT) \
 	tabledesigner.$(OBJEXT) tablemodel.$(OBJEXT) \
-	tableviewer.$(OBJEXT)
+	tableviewer.$(OBJEXT) utilities.$(OBJEXT)
 kaccess_OBJECTS = $(am_kaccess_OBJECTS)
 kaccess_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(srcdir)
@@ -67,7 +67,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/popupentry.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/tabledesigner.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/tablemodel.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/tableviewer.Po
+@AMDEP_TRUE@	./$(DEPDIR)/tableviewer.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/utilities.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -165,13 +166,19 @@ kaccess_SOURCES = buttons.h \
 		  dbwindow.cpp dbwindow.h \
 		  kaccess.cpp \
 		  mainwindow.cpp mainwindow.h \
+		  tabledesigner/cellrendererdatetime.h \
+		  tabledesigner/cellrenderernumeric.h \
+		  tabledesigner/cellrenderertable.h \
 		  tabledesigner/designertreeview.cpp tabledesigner/designertreeview.h \
 		  tabledesigner/cellrendererlist.cpp tabledesigner/cellrenderer.h \
 		  tabledesigner/cellrendererpopup.cpp tabledesigner/cellrendererpopup.h \
 		  tabledesigner/popupentry.cpp tabledesigner/popupentry.h \
 		  tabledesigner/tabledesigner.cpp tabledesigner/tabledesigner.h \
 		  tabledesigner/tablemodel.cpp tabledesigner/tablemodel.h \
-		  tabledesigner/tableviewer.cpp tabledesigner/tableviewer.h
+		  tabledesigner/tableviewer.cpp tabledesigner/tableviewer.h \
+		  triplelist.h \
+		  triplet.h \
+		  utilities.cpp utilities.h
 
 CLEANFILES = *~ *.o
 all: all-am
@@ -251,6 +258,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tabledesigner.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tablemodel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tableviewer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utilities.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -548,8 +556,6 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-binPROGRAMS uninstall-info-am
 
-		  triplelist.h \
-		  triplet.h
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

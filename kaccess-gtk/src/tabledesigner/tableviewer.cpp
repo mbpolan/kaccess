@@ -22,6 +22,8 @@
 #include <gtkmm/label.h>
 #include <gtkmm/spinbutton.h>
 #include <gtkmm/stock.h>
+#include "cellrendererdatetime.h"
+#include "cellrenderernumeric.h"
 #include "tableviewer.h"
 
 // constructor
@@ -116,6 +118,42 @@ TableViewer::TableViewer(TableModel *tmodel): Gtk::Window(), model(tmodel) {
 			};
 			break;
 			
+			// number
+			case ROW_NUMBER: {
+				CellRendererNumeric *renderer=new CellRendererNumeric(s);
+				renderer->property_editable()=true;
+				
+				// append a new column
+				cols=tview->append_column(header, *manage(renderer));
+				Gtk::TreeViewColumn *pCol=tview->get_column(cols-1);
+				
+				if (pCol) {
+					pCol->add_attribute(renderer->property_text(), colRec.stringVec[s]);
+					renderer->sigEdited().connect(sigc::mem_fun(*this, &TableViewer::onStringCellEdited));
+				}
+				
+				s+=1;
+			};
+			break;
+			
+			// date/time
+			case ROW_DATE_TIME: {
+				CellRendererDateTime *renderer=new CellRendererDateTime(s);
+				renderer->property_editable()=true;
+				
+				// append a new column
+				cols=tview->append_column(header, *manage(renderer));
+				Gtk::TreeViewColumn *pCol=tview->get_column(cols-1);
+				
+				if (pCol) {
+					pCol->add_attribute(renderer->property_text(), colRec.stringVec[s]);
+					renderer->sigEdited().connect(sigc::mem_fun(*this, &TableViewer::onStringCellEdited));
+				}
+				
+				s+=1;
+			};
+			break;
+			
 			// yes/no row
 			case ROW_YES_NO: {
 				cols=tview->append_column_editable(header, colRec.boolVec[b]);
@@ -128,7 +166,6 @@ TableViewer::TableViewer(TableModel *tmodel): Gtk::Window(), model(tmodel) {
 		int pkey=model->getPKeyRow();
 		if (pkey==i) {
 			// make the renderer color the background light blue for this column
-			//Gtk::CellRendererText *renderer=dynamic_cast<Gtk::CellRendererText*> (tview->get_column_cell_renderer(cols-1));
 			Gtk::CellRenderer *renderer=tview->get_column_cell_renderer(cols-1);
 			if (renderer)
 				renderer->property_cell_background()="LightBlue";
@@ -191,4 +228,12 @@ void TableViewer::addRecords() {
 	}
 	
 	return;
+};
+
+// signal handler to place text in a cell
+void TableViewer::onStringCellEdited(const Glib::ustring &path, const Glib::ustring &text, int col) {
+	Gtk::TreeModel::Row row=*(lstore->get_iter(Gtk::TreeModel::Path(path)));
+	
+	// set the text
+	row[colRec.stringVec[col]]=text;
 };

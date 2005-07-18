@@ -158,8 +158,14 @@ bool DesignerTreeView::setAutoPrimaryKey() {
 
 // update the modified cell
 void DesignerTreeView::onCellEdited(const Glib::ustring &path, const Glib::ustring &text) {
-	Gtk::TreeModel::Row row=*tstore->get_iter(Gtk::TreeModel::Path(path));
-	row[colRec.fieldType]=text;
+	Gtk::TreeModel::Row row=*(tstore->get_iter(Gtk::TreeModel::Path(path)));
+	
+	// validate the user's input
+	if (text!="Text" && text!="Number" && text!="Date/Time" && text!="Memo" && text!="Yes/No")
+		row[colRec.fieldType]="Text";
+	
+	else
+		row[colRec.fieldType]=text;
 };
 
 // overloaded virtual key press event function

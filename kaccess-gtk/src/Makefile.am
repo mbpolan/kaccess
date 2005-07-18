@@ -8,14 +8,18 @@ kaccess_SOURCES = buttons.h \
 		  dbwindow.cpp dbwindow.h \
 		  kaccess.cpp \
 		  mainwindow.cpp mainwindow.h \
+		  tabledesigner/cellrendererdatetime.h \
+		  tabledesigner/cellrenderernumeric.h \
+		  tabledesigner/cellrenderertable.h \
 		  tabledesigner/designertreeview.cpp tabledesigner/designertreeview.h \
 		  tabledesigner/cellrendererlist.cpp tabledesigner/cellrenderer.h \
 		  tabledesigner/cellrendererpopup.cpp tabledesigner/cellrendererpopup.h \
 		  tabledesigner/popupentry.cpp tabledesigner/popupentry.h \
 		  tabledesigner/tabledesigner.cpp tabledesigner/tabledesigner.h \
 		  tabledesigner/tablemodel.cpp tabledesigner/tablemodel.h \
-		  tabledesigner/tableviewer.cpp tabledesigner/tableviewer.h
+		  tabledesigner/tableviewer.cpp tabledesigner/tableviewer.h \
 		  triplelist.h \
-		  triplet.h
+		  triplet.h \
+		  utilities.cpp utilities.h
 
 CLEANFILES = *~ *.o

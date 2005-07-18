@@ -45,6 +45,7 @@ class TableViewer: public Gtk::Window {
 	protected:
 		// signal handlers
 		void addRecords();
+		void onStringCellEdited(const Glib::ustring &path, const Glib::ustring &path, int col);
 		
 		// widgets
 		Gtk::VBox *vbox;
