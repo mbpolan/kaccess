@@ -19,6 +19,7 @@
  
 #include <gtkmm/dialog.h> 
 #include <gtkmm/entry.h>
+#include <gtkmm/messagedialog.h>
 #include <sstream>
 #include "tabledesigner.h"
 
@@ -114,7 +115,7 @@ void TableDesigner::setModel(TableModel *tmodel) {
 	set_title(ss.str());
 	
 	// remove all rows first
-	dtview->tstore->clear();
+	dtview->lstore->clear();
 	
 	// each designer has 50 rows by default, so find out how much need
 	// to be added after the model's data is added
@@ -130,7 +131,7 @@ void TableDesigner::setModel(TableModel *tmodel) {
 		std::string desc=row.getDescription();
 		
 		// modify this row
-		trow=*(dtview->tstore->append());
+		trow=*(dtview->lstore->append());
 		trow[dtview->colRec.fieldName]=name;
 		trow[dtview->colRec.fieldType]=type;
 		trow[dtview->colRec.fieldDescription]=desc;
@@ -142,7 +143,7 @@ void TableDesigner::setModel(TableModel *tmodel) {
 	
 	// add remaining rows
 	for (int i=0; i<rows; i++)
-		dtview->tstore->append();
+		dtview->lstore->append();
 };
 
 // save table handler
@@ -177,6 +178,36 @@ void TableDesigner::onSaveTable() {
 		if (id==0x00) {
 			// get the name
 			name=entry->get_text();
+			
+			// loop till the name is valid
+			while(1) {
+				// name is too short or not valid
+				if (name.size()<1) {
+					// display an error message
+					Gtk::MessageDialog md(*this, "The table name must be at least 1 character long.",
+								false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+					md.run();
+					md.hide();
+				
+					// run the name input dialog again
+					id=d.run();
+					
+					// see if the name is ok
+					if (id==0x00) {
+						name=entry->get_text();
+						if (name.size()<1)
+							continue;
+					}
+					
+					// cancel button clicked
+					else
+						return;
+				}
+				
+				// name is valid
+				else
+					break;
+			}
 		}
 		
 		else
@@ -189,7 +220,7 @@ void TableDesigner::onSaveTable() {
 	
 	// add each row
 	int c=0;
-	for (Gtk::TreeModel::iterator it=dtview->tstore->children().begin(); it!=dtview->tstore->children().end(); ++it) {
+	for (Gtk::TreeModel::iterator it=dtview->lstore->children().begin(); it!=dtview->lstore->children().end(); ++it) {
 		if ((*it) && !(((Glib::ustring) (*it)[dtview->colRec.fieldName]).empty())) {
 			Glib::ustring rName=(*it)[dtview->colRec.fieldName];
 			Glib::ustring rType=(*it)[dtview->colRec.fieldType];

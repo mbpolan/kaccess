@@ -20,10 +20,12 @@
 
 #include <gtkmm/dialog.h>
 #include <gtkmm/label.h>
+#include <gtkmm/messagedialog.h>
 #include <gtkmm/spinbutton.h>
 #include <gtkmm/stock.h>
 #include "cellrendererdatetime.h"
 #include "cellrenderernumeric.h"
+#include "cellrendererstring.h"
 #include "tableviewer.h"
 
 // constructor
@@ -113,7 +115,19 @@ TableViewer::TableViewer(TableModel *tmodel): Gtk::Window(), model(tmodel) {
 			
 			// text
 			case ROW_TEXT: {
-				cols=tview->append_column_editable(header, colRec.stringVec[s]); 
+				// create a new string renderer
+				CellRendererString *renderer=new CellRendererString(s);
+				renderer->property_editable()=true;
+				
+				// append a new column
+				cols=tview->append_column(header, *manage(renderer));
+				Gtk::TreeViewColumn *pCol=tview->get_column(cols-1);
+				
+				if (pCol) {
+					pCol->add_attribute(renderer->property_text(), colRec.stringVec[s]);
+					renderer->sigEdited().connect(sigc::mem_fun(*this, &TableViewer::onStringCellEdited));
+				}
+				
 				s+=1;
 			};
 			break;
@@ -175,9 +189,28 @@ TableViewer::TableViewer(TableModel *tmodel): Gtk::Window(), model(tmodel) {
 		//descriptions.push_back(row.getDescription());
 	}
 	
+	// edit column attributes
+	for (int i=0; i<tview->get_columns().size(); i++) {
+		Gtk::TreeViewColumn *pCol=tview->get_column(i);
+		if (pCol) {
+			// resizable
+			pCol->set_resizable();
+			
+			// expand
+			pCol->property_expand()=true;
+		}
+	}
+	
 	// build the interface
 	vbox=new Gtk::VBox;
 	vbox->set_spacing(3);
+	
+	// scrolled window
+	sWindow=new Gtk::ScrolledWindow;
+	sWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+	
+	// add the tree view to scrolled window
+	sWindow->add(*manage(tview));
 	
 	// toolbar
 	Gtk::Widget *tbar=uiManager->get_widget("/MainToolbar");
@@ -189,7 +222,7 @@ TableViewer::TableViewer(TableModel *tmodel): Gtk::Window(), model(tmodel) {
 	// pack the widgets
 	if (tbar)
 		vbox->pack_start(*manage(tbar), Gtk::PACK_SHRINK);
-	vbox->pack_start(*manage(tview));
+	vbox->pack_start(*manage(sWindow));
 	vbox->pack_start(*manage(statsbar), Gtk::PACK_SHRINK);
 	
 	add(*manage(vbox));
@@ -233,6 +266,31 @@ void TableViewer::addRecords() {
 // signal handler to place text in a cell
 void TableViewer::onStringCellEdited(const Glib::ustring &path, const Glib::ustring &text, int col) {
 	Gtk::TreeModel::Row row=*(lstore->get_iter(Gtk::TreeModel::Path(path)));
+	
+	// check if this is the primary key row
+	if (model->getPKeyRow()==col) {
+		// this is the primary key row, therefore its value _must_ be unique.
+		// iterate over each row and look for matching values
+		for (Gtk::TreeModel::iterator it=lstore->children().begin(); it!=lstore->children().end(); ++it) {
+			if ((*it)) {
+				Glib::ustring val=(*it)[colRec.stringVec[col]];
+				
+				// compare values
+				if (val==text) {
+					// display an error
+					Gtk::MessageDialog md(*this, "There already exists a record that contains the same primary"
+									"\nkey as the one you are attempting to enter. Please either"
+									"\nremove the other key or enter a unique one.",
+								false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+					md.run();
+					
+					// clear the text
+					row[colRec.stringVec[col]]="";
+					return;
+				}
+			}
+		}
+	}
 	
 	// set the text
 	row[colRec.stringVec[col]]=text;

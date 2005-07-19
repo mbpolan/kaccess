@@ -24,8 +24,8 @@
 // constructor
 DesignerTreeView::DesignerTreeView(bool makeDefaults): Gtk::TreeView(), pkeySet(false) {
 	// create the model
-	tstore=Glib::RefPtr<Gtk::TreeStore>::RefPtr(Gtk::TreeStore::create(colRec));
-	set_model(tstore);
+	lstore=Glib::RefPtr<Gtk::ListStore>::RefPtr(Gtk::ListStore::create(colRec));
+	set_model(lstore);
 	
 	// populate the context menu
 	Gtk::Menu::MenuList mList=contextMenu.items();
@@ -39,6 +39,10 @@ DesignerTreeView::DesignerTreeView(bool makeDefaults): Gtk::TreeView(), pkeySet(
 	if (makeDefaults) {
 		append_column("", colRec.generic);
 		append_column_editable("Name", colRec.fieldName);
+		
+		// connect renderer signals for 'name' column
+		Gtk::CellRendererText *pRenderer=static_cast<Gtk::CellRendererText*> (get_column_cell_renderer(1));
+		pRenderer->signal_edited().connect(sigc::mem_fun(*this, &DesignerTreeView::onNameCellEdited));
 		
 		// type column
 		CellRendererList *renderer=new CellRendererList();
@@ -57,9 +61,14 @@ DesignerTreeView::DesignerTreeView(bool makeDefaults): Gtk::TreeView(), pkeySet(
 		renderer->append_list_item("Yes/No");
 		
 		renderer->property_editable()=true;
-		renderer->signal_edited().connect(sigc::mem_fun(*this, &DesignerTreeView::onCellEdited));
+		renderer->signal_edited().connect(sigc::mem_fun(*this, &DesignerTreeView::onTypeCellEdited));
 		
+		// description column
 		append_column_editable("Description", colRec.fieldDescription);
+		
+		// connect renderer signals
+		pRenderer=static_cast<Gtk::CellRendererText*> (get_column_cell_renderer(3));
+		pRenderer->signal_edited().connect(sigc::mem_fun(*this, &DesignerTreeView::onDescCellEdited));
 		
 		// enable the headers to be clicked
 		set_headers_clickable(true);
@@ -74,7 +83,7 @@ DesignerTreeView::DesignerTreeView(bool makeDefaults): Gtk::TreeView(), pkeySet(
 		
 		// add 50 rows
 		for (int i=0; i<50; i++)
-			tstore->append();
+			lstore->append();
 			
 		// connect column signals
 		get_column(1)->signal_clicked().connect(sigc::mem_fun(*this, &DesignerTreeView::onNameColumnClicked));
@@ -92,14 +101,14 @@ void DesignerTreeView::setPKeyRow(int row) {
 	this->pkeySet=true;
 	
 	// clear the generic column first
-	for (Gtk::TreeModel::iterator it=tstore->children().begin(); it!=tstore->children().end(); ++it) {
+	for (Gtk::TreeModel::iterator it=lstore->children().begin(); it!=lstore->children().end(); ++it) {
 		if ((*it))
 			(*it)[colRec.generic]="";
 	}
 	
 	// set the row
 	int c=0;
-	for (Gtk::TreeModel::iterator it=tstore->children().begin(); it!=tstore->children().end(); ++it) {
+	for (Gtk::TreeModel::iterator it=lstore->children().begin(); it!=lstore->children().end(); ++it) {
 		if ((*it) && c==row) {
 			(*it)[colRec.generic]="P";
 			break;
@@ -137,7 +146,7 @@ bool DesignerTreeView::tableValid() {
 
 // check if the first row is valid
 bool DesignerTreeView::isFirstRowValid() {
-	Gtk::TreeModel::iterator it=tstore->children().begin();
+	Gtk::TreeModel::iterator it=lstore->children().begin();
 	if ((*it)) {
 		Glib::ustring value=(*it)[colRec.fieldName];
 		return (value.size()>0);
@@ -150,22 +159,58 @@ bool DesignerTreeView::isFirstRowValid() {
 // automatically set a primary key
 bool DesignerTreeView::setAutoPrimaryKey() {
 	if (isFirstRowValid()) {
-		Gtk::TreeModel::iterator it=tstore->children().begin();
+		Gtk::TreeModel::iterator it=lstore->children().begin();
 		if (it)
 			(*it)[colRec.generic]="P";
 	}
 };
 
-// update the modified cell
-void DesignerTreeView::onCellEdited(const Glib::ustring &path, const Glib::ustring &text) {
-	Gtk::TreeModel::Row row=*(tstore->get_iter(Gtk::TreeModel::Path(path)));
+// signal handler for editing of `name' column
+void DesignerTreeView::onNameCellEdited(const Glib::ustring &path, const Glib::ustring &text) {
+	Gtk::TreeModel::Row row=*(lstore->get_iter(Gtk::TreeModel::Path(path)));
 	
-	// validate the user's input
-	if (text!="Text" && text!="Number" && text!="Date/Time" && text!="Memo" && text!="Yes/No")
+	// check the length of the text
+	if (text.size()>0) {
+		// set a default value for the `type' column
+		row[colRec.fieldType]="Text";
+	}
+	
+	else {
+		// clear the `type' and `description'
+		row[colRec.fieldType]="";
+		row[colRec.fieldDescription]="";
+	}
+};
+
+// signal handler to manage the editing of the `type' column
+void DesignerTreeView::onTypeCellEdited(const Glib::ustring &path, const Glib::ustring &text) {
+	Gtk::TreeModel::Row row=*(lstore->get_iter(Gtk::TreeModel::Path(path)));
+	
+	// we check if the row's name cell is valid
+	Glib::ustring name=row[colRec.fieldName];
+	if (name.size()<1)
+		row[colRec.fieldType]="";
+	
+	// make sure the input is valid
+	else if (text!="Text" && text!="Number" && text!="Date/Time" && text!="Memo" && text!="Yes/No")
 		row[colRec.fieldType]="Text";
 	
+	// everything seems ok
 	else
 		row[colRec.fieldType]=text;
+};
+
+// signal handler to manage the editing of the `description' column
+void DesignerTreeView::onDescCellEdited(const Glib::ustring &path, const Glib::ustring &text) {
+	Gtk::TreeModel::Row row=*(lstore->get_iter(Gtk::TreeModel::Path(path)));
+	
+	// we check if the row's name cell is valid
+	Glib::ustring name=row[colRec.fieldName];
+	if (name.size()<1)
+		row[colRec.fieldDescription]="";
+	
+	else
+		row[colRec.fieldDescription]=text;
 };
 
 // overloaded virtual key press event function
@@ -184,15 +229,26 @@ void DesignerTreeView::setPrimaryKey() {
 	if (sel) {
 		Gtk::TreeModel::iterator it=sel->get_selected();
 		if ((*it)) {
-			// reset other rows
-			for (Gtk::TreeModel::iterator _it=tstore->children().begin(); _it!=tstore->children().end(); ++_it) {
-				if ((*_it) && (*_it)[colRec.generic]=="P")
-					(*_it)[colRec.generic]="";
+			// check if the target row is valid
+			Glib::ustring name=(*it)[colRec.fieldName];
+			if (name.size()>0) {
+				// reset other rows
+				for (Gtk::TreeModel::iterator _it=lstore->children().begin(); _it!=lstore->children().end(); ++_it) {
+					if ((*_it) && (*_it)[colRec.generic]=="P")
+						(*_it)[colRec.generic]="";
+				}
+				
+				// set the new primary key
+				(*it)[colRec.generic]="P";
+				pkeySet=true;
 			}
 			
-			// set the new primary key
-			(*it)[colRec.generic]="P";
-			pkeySet=true;
+			// display an error
+			else {
+				Gtk::MessageDialog md("The row that you selected is not valid.", false, Gtk::MESSAGE_ERROR, 
+							Gtk::BUTTONS_OK, true);
+				md.run();
+			}
 		}
 	}
 };

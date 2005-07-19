@@ -16,66 +16,37 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-// tableviewer.h: the TableViewer class
+// cellrendererstring.h: the CellRendererString class
 
-#ifndef TABLEVIEWER_H
-#define TABLEVIEWER_H
+#ifndef CELLRENDERERSTRING_H
+#define CELLRENDERERSTRING_H
 
-#include <gtkmm/actiongroup.h>
-#include <gtkmm/box.h>
-#include <gtkmm/liststore.h>
-#include <gtkmm/scrolledwindow.h>
-#include <gtkmm/statusbar.h>
-#include <gtkmm/toolbar.h>
-#include <gtkmm/tooltips.h>
-#include <gtkmm/treeview.h>
-#include <gtkmm/uimanager.h>
-#include <gtkmm/window.h>
-#include <vector>
-#include "tablemodel.h" 
+#include "cellrenderertable.h"
 
-class TableViewer: public Gtk::Window {
+/** Derived renderer for string text.
+  * This renderer validates plain strings for various requirements, such
+  * as length, case, etc.
+*/
+class CellRendererString: public CellRendererTable {
 	public:
-		TableViewer(TableModel *tmodel);
-		virtual ~TableViewer() {};
+		/// Constructor
+		CellRendererString(int col): CellRendererTable(col) {};
 		
-		void setModel(TableModel *tmodel) { model=tmodel; };
-		TableModel* getModel() const { return model; };
-		void clear();
+		/// Destructor
+		virtual ~CellRendererString() {};
 		
 	protected:
-		// signal handlers
-		void addRecords();
-		void onStringCellEdited(const Glib::ustring &path, const Glib::ustring &path, int col);
+		/// Validates strings
+		virtual Glib::ustring validate(Glib::ustring &text) {
+			Glib::ustring newText=CellRendererTable::validate(text);
+			return newText;
+		}
 		
-		// widgets
-		Gtk::VBox *vbox;
-		Gtk::ScrolledWindow *sWindow;
-		Gtk::Statusbar *statsbar;
-		Gtk::Toolbar *toolbar;
-		
-		// this class's column record
-		class ColumnRecord: public Gtk::TreeModel::ColumnRecord {
-			public:
-				ColumnRecord() {
-				};
-				
-				std::vector<Gtk::TreeModelColumn<Glib::ustring> > stringVec;
-				std::vector<Gtk::TreeModelColumn<bool> > boolVec;
+		// overloaded on_edited() function
+		virtual void on_edited(const Glib::ustring &path, const Glib::ustring &text) {
+			Glib::ustring newText=validate(const_cast<Glib::ustring&> (text));
+			CellRendererTable::on_edited(path, newText);
 		};
-		
-		TableModel *model;
-		
-		// tree view related
-		Gtk::TreeView *tview;
-		Glib::RefPtr<Gtk::ListStore> lstore;
-		
-		// action group and ui manager
-		Glib::RefPtr<Gtk::ActionGroup> actionGroup;
-		Glib::RefPtr<Gtk::UIManager> uiManager;
-	
-	public:
-		ColumnRecord colRec;
 };
 
 #endif

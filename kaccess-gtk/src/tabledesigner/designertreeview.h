@@ -21,7 +21,7 @@
 #define DESIGNERTREEVIEW_H
 
 #include <gtkmm/menu.h>
-#include <gtkmm/treestore.h>
+#include <gtkmm/liststore.h>
 #include <gtkmm/treeview.h>
 
 /** The TableDesigner's derived tree view.
@@ -41,7 +41,7 @@ class DesignerTreeView: public Gtk::TreeView {
 		virtual ~DesignerTreeView();
 		
 		/// The model used for this view
-		Glib::RefPtr<Gtk::TreeStore> tstore;
+		Glib::RefPtr<Gtk::ListStore> lstore;
 		
 		/// typedef'd column clicked signal
 		typedef sigc::signal<void, int> colClickedSig;
@@ -86,7 +86,10 @@ class DesignerTreeView: public Gtk::TreeView {
 		virtual bool on_button_press_event(GdkEventButton*);
 		
 		// signal handlers
-		void onCellEdited(const Glib::ustring &path, const Glib::ustring &text);
+		void onNameCellEdited(const Glib::ustring &path, const Glib::ustring &text);
+		void onTypeCellEdited(const Glib::ustring &path, const Glib::ustring &text);
+		void onDescCellEdited(const Glib::ustring &path, const Glib::ustring &text);
+		
 		void onNameColumnClicked() { sigColumnClicked().emit(0x0); };
 		void onTypeColumnClicked() { sigColumnClicked().emit(0x1); };
 		void onDescColumnClicked() { sigColumnClicked().emit(0x2); };
