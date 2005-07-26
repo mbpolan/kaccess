@@ -68,10 +68,62 @@ class CellRendererDateTime: public CellRendererTable {
 					// format is: 01/01/2005 (example)
 					// the first 2 bytes need to be followed by a forward slash. the same applies for the next 3.
 					// the last 4 bytes need to be integers.
-					if ((isInt(text[0]) && isInt(text[1]) && text[2]=='/') && 
+					if (text.size()==10 &&
+					    (isInt(text[0]) && isInt(text[1]) && text[2]=='/') && 
 					    (isInt(text[3]) && isInt(text[4]) && text[5]=='/') && 
 					    (isInt(text[6]) && isInt(text[7]) && isInt(text[8]) && isInt(text[9])))
 					    	return text;
+					
+					// alternate way to display the date: 1/1/2005 (example)
+					// if the first 2 bytes of the month and day are only 1 character, then add 0's before the
+					// characters
+					else if (text.size()==8 &&
+						 (isInt(text[0]) && text[1]=='/') &&
+						 (isInt(text[2]) && text[3]=='/') &&
+						 (isInt(text[4]) && isInt(text[5]) && isInt(text[6]) && isInt(text[7]))) {
+						 	// create a new string with the newly formatted date
+						 	Glib::ustring newText="0";
+							newText+=text[0];
+							newText+=text[1];
+							newText+="0";
+							
+							// erase the unnecessary data
+							text.erase(0, 2);
+							
+							// add the remainder of the original string
+							newText+=text;
+							return newText;
+					}
+					
+					// if the day is 2 bytes long: 1/20/2005 (example)
+					// the month is 1 byte long while the day is 2 bytes. this means we insert a 0 before the
+					// initial month
+					else if (text.size()==9 &&
+						 (isInt(text[0]) && text[1]=='/') &&
+						 (isInt(text[2]) && isInt(text[3]) && text[4]=='/') &&
+						 (isInt(text[5]) && isInt(text[6]) && isInt(text[7]) && isInt(text[8]))) {
+						 	// create a new string with the leading 0
+							Glib::ustring newText="0";
+							newText+=text;
+							return newText;
+					}
+					
+					// if the month is 2 bytes long and the day is 1 byte long: 01/9/2005 (example)
+					// what we basically do is copy the entire string and insert a 0 before the first
+					// day digit
+					else if (text.size()==9 &&
+						 (isInt(text[0]) && isInt(text[1]) && text[2]=='/') &&
+						 (isInt(text[3]) && text[4]=='/') &&
+						 (isInt(text[5]) && isInt(text[6]) && isInt(text[7]) && isInt(text[8]))) {
+						 	// create a new string with the proper format
+							Glib::ustring newText;
+							newText+=text.substr(0, 3);
+							newText+="0";
+							text.erase(0, 3);
+							newText+=text;
+							
+							return newText;
+					}
 					
 					// the format is not valid
 					else
@@ -84,10 +136,61 @@ class CellRendererDateTime: public CellRendererTable {
 					// format is: 2005/01/01 (example)
 					// reverse of the previous case. the first 4 bytes must be integers followed by a forward slash.
 					// the next 3 must be integers followed by another forward slash. the last 2 must be integers
-					if ((isInt(text[0]) && isInt(text[1]) && isInt(text[2]) && isInt(text[3]) && text[4]=='/') &&
+					if (text.size()==10 &&
+					    (isInt(text[0]) && isInt(text[1]) && isInt(text[2]) && isInt(text[3]) && text[4]=='/') &&
 					    (isInt(text[5]) && isInt(text[6]) && text[7]=='/') &&
 					    (isInt(text[8]) && isInt(text[9])))
 					    	return text;
+					
+					// alternate way to display the date: 2005/1/1
+					// almost the same as above, but the month and day digits are only 1 byte long. we need to insert
+					// additional 0's before the characters
+					else if (text.size()==8 &&
+						 (isInt(text[0]) && isInt(text[1]) && isInt(text[2]) && isInt(text[3]) && text[4]=='/') &&
+						 (isInt(text[5]) && text[6]=='/') &&
+						 (isInt(text[7]))) {
+						 	// create a new string
+							Glib::ustring newText=text.substr(0, 5);
+							newText+="0";
+							newText+=text[5];
+							newText+=text[6];
+							newText+="0";
+							newText+=text[7];
+							
+							// return the new string
+							return newText;
+					}
+					
+					// if the month is 1 byte long and the day is 2 bytes long: 2005/1/20 (example)
+					// we need to add a 0 before the month digit and reconstruct the remainder of the
+					// string
+					else if (text.size()==9 &&
+						 (isInt(text[0]) && isInt(text[1]) && isInt(text[2]) && isInt(text[3]) && text[4]=='/') &&
+						 (isInt(text[5]) && text[6]=='/') &&
+						 (isInt(text[7]) && isInt(text[8]))) {
+						 	// create a new string with the proper format
+							Glib::ustring newText=text.substr(0, 5);
+							text.erase(0, 5);
+							newText+="0";
+							newText+=text;
+							
+							return newText;
+					}
+					
+					// if the month is 2 bytes long and the day is 1 byte: 2005/01/9 (example)
+					// this format is rather strange looking. ;) therefore we add another 0 before the initial
+					// day digit
+					else if (text.size()==9 &&
+						 (isInt(text[0]) && isInt(text[1]) && isInt(text[2]) && isInt(text[3]) && text[4]=='/') &&
+						 (isInt(text[5]) && isInt(text[6]) && text[7]=='/') &&
+						 (isInt(text[8]))) {
+						 	// create a new string with the format
+							Glib::ustring newText=text.substr(0, 8);
+							newText+="0";
+							newText+=text[8];
+							
+							return newText;
+					}
 					
 					// invalid format
 					else

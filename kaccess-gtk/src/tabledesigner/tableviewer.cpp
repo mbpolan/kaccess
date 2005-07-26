@@ -266,17 +266,22 @@ void TableViewer::addRecords() {
 // signal handler to place text in a cell
 void TableViewer::onStringCellEdited(const Glib::ustring &path, const Glib::ustring &text, int col) {
 	Gtk::TreeModel::Row row=*(lstore->get_iter(Gtk::TreeModel::Path(path)));
+	int nrow=atoi(path.c_str());
 	
 	// check if this is the primary key row
 	if (model->getPKeyRow()==col) {
 		// this is the primary key row, therefore its value _must_ be unique.
 		// iterate over each row and look for matching values
+		int c=0;
 		for (Gtk::TreeModel::iterator it=lstore->children().begin(); it!=lstore->children().end(); ++it) {
-			if ((*it)) {
+			if ((*it) && c!=nrow) {
 				Glib::ustring val=(*it)[colRec.stringVec[col]];
 				
 				// compare values
 				if (val==text) {
+					// clear the text
+					row[colRec.stringVec[col]]="";
+					
 					// display an error
 					Gtk::MessageDialog md(*this, "There already exists a record that contains the same primary"
 									"\nkey as the one you are attempting to enter. Please either"
@@ -284,11 +289,10 @@ void TableViewer::onStringCellEdited(const Glib::ustring &path, const Glib::ustr
 								false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 					md.run();
 					
-					// clear the text
-					row[colRec.stringVec[col]]="";
 					return;
 				}
 			}
+			c++;
 		}
 	}
 	

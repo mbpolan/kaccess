@@ -19,6 +19,8 @@
 // dbwindow.cpp: implementations of DBWindow class
 
 #include <gtkmm/box.h>
+#include <gtkmm/dialog.h>
+#include <gtkmm/entry.h>
 #include <gtkmm/image.h>
 #include <gtkmm/frame.h>
 #include <gtkmm/buttonbox.h>
@@ -266,6 +268,44 @@ void DBWindow::saveTable(std::pair<std::string, TableModel*> p, bool originalSav
 	
 	// check if we are overwriting or saving a new table
 	if (originalSave) {
+		// check if there any tables with the same name
+		bool exists=views[DBWIN_VIEW_TABLES]->exists(name);
+		if (exists) {
+			// create a dialog
+			Gtk::Dialog d("Name Exists", *this, true, true);
+			Gtk::VBox *vb=d.get_vbox();
+			vb->set_spacing(2);
+			
+			// add widgets
+			vb->pack_start(*manage(new Gtk::Label("The name that you've choosen already exists.\n"
+								"Please enter a new one.")));
+			Gtk::Entry *entry=new Gtk::Entry;
+			vb->pack_start(*manage(entry));
+			
+			// add buttons
+			d.add_button("OK", 0x00);
+			d.add_button("Cancel", 0x01);
+			
+			// loop
+			do {
+				d.show_all_children();
+				if (d.run()==0x00) {
+					name=entry->get_text();
+					if (views[DBWIN_VIEW_TABLES]->exists(name))
+						continue;
+					
+					else
+						break;
+				}
+				
+				else {
+					// TODO: maybe we should display a confirmation message here?
+					return;
+				}
+			}
+			while(1);
+		}
+		
 		// add a row
 		Gtk::TreeModel::Row row=*(views[DBWIN_VIEW_TABLES]->getTreeModel()->append());
 		row[views[DBWIN_VIEW_TABLES]->colRec.item]=name;

@@ -60,6 +60,19 @@ bool DBTreeView::on_button_press_event(GdkEventButton *e) {
 	return true;
 };
 
+// check if a name already exists
+bool DBTreeView::exists(const Glib::ustring &name) {
+	bool exists=false;
+	for (Gtk::TreeModel::iterator it=tstore->children().begin(); it!=tstore->children().end(); ++it) {
+		if ((*it) && (*it)[colRec.item]==name) {
+			exists=true;
+			break;
+		}
+	}
+	
+	return exists;
+};
+
 // signal handler for context menu
 void DBTreeView::onEditMenuPopup() {
 	Glib::RefPtr<Gtk::TreeView::Selection> sel=get_selection();

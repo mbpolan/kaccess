@@ -68,6 +68,9 @@ class DBTreeView: public Gtk::TreeView {
 		/// Get the TreeStore for this view
 		Glib::RefPtr<Gtk::TreeStore> getTreeModel() const { return tstore; }
 		
+		/// Check if an item already exists
+		bool exists(const Glib::ustring &name);
+		
 	private:
 		// overloaded functions
 		virtual bool on_button_press_event(GdkEventButton*);

@@ -29,6 +29,12 @@ DesignerTreeView::DesignerTreeView(bool makeDefaults): Gtk::TreeView(), pkeySet(
 	
 	// populate the context menu
 	Gtk::Menu::MenuList mList=contextMenu.items();
+	mList.push_back(Gtk::Menu_Helpers::MenuElem("_Insert Field",
+			sigc::mem_fun(*this, &DesignerTreeView::insertField)));
+	
+	mList.push_back(Gtk::Menu_Helpers::MenuElem("_Remove Field",
+			sigc::mem_fun(*this, &DesignerTreeView::removeField)));
+	
 	mList.push_back(Gtk::Menu_Helpers::MenuElem("_Set Primary Key",
 			sigc::mem_fun(*this, &DesignerTreeView::setPrimaryKey)));
 	
@@ -168,9 +174,31 @@ bool DesignerTreeView::setAutoPrimaryKey() {
 // signal handler for editing of `name' column
 void DesignerTreeView::onNameCellEdited(const Glib::ustring &path, const Glib::ustring &text) {
 	Gtk::TreeModel::Row row=*(lstore->get_iter(Gtk::TreeModel::Path(path)));
+	int nrow=atoi(path.c_str());
 	
 	// check the length of the text
 	if (text.size()>0) {
+		// first make sure that there is no other field with the same value
+		int c=0;
+		for (Gtk::TreeModel::iterator it=lstore->children().begin(); it!=lstore->children().end(); ++it) {
+			if ((*it) && c!=nrow) {
+				Glib::ustring val=(*it)[colRec.fieldName];
+				
+				if (val==text) {
+					// reset the cell
+					row[colRec.fieldName]="";
+					
+					// display an error message
+					Gtk::MessageDialog md("There already exists another field with the same name.\n"
+								"Please either change the original one or enter a unique one.",
+								false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+					md.run();
+					return;
+				}
+			}
+			c++;
+		}
+		
 		// set a default value for the `type' column
 		row[colRec.fieldType]="Text";
 	}
@@ -262,5 +290,25 @@ void DesignerTreeView::unsetPrimaryKey() {
 			(*it)[colRec.generic]="";
 			pkeySet=false;
 		}
+	}
+};
+
+// function to insert another field
+void DesignerTreeView::insertField() {
+	Glib::RefPtr<Gtk::TreeView::Selection> sel=get_selection();
+	if (sel) {
+		Gtk::TreeModel::iterator it=sel->get_selected();
+		if (it)
+			lstore->insert(it);
+	}
+};
+
+// function to remove a field
+void DesignerTreeView::removeField() {
+	Glib::RefPtr<Gtk::TreeView::Selection> sel=get_selection();
+	if (sel) {
+		Gtk::TreeModel::iterator it=sel->get_selected();
+		if (it)
+			lstore->erase(it);
 	}
 };

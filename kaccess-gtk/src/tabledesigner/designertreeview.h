@@ -95,6 +95,8 @@ class DesignerTreeView: public Gtk::TreeView {
 		void onDescColumnClicked() { sigColumnClicked().emit(0x2); };
 		void setPrimaryKey();
 		void unsetPrimaryKey();
+		void insertField();
+		void removeField();
 		
 		// signal instances
 		colClickedSig signalColumnClicked;
